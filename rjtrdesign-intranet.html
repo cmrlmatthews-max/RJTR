@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RJTR Design — Internal Portal</title>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    html, body, #root { margin: 0; padding: 0; height: 100%; background: #0e0e0e; }
+    * { box-sizing: border-box; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: #0e0e0e; }
+    ::-webkit-scrollbar-thumb { background: #282828; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    const NAV = [
+      { id: "home",      label: "Dashboard",     icon: "⊞" },
+      { id: "news",      label: "Announcements", icon: "📢" },
+      { id: "docs",      label: "Documents",     icon: "📁" },
+      { id: "directory", label: "Directory",     icon: "👥" },
+      { id: "hr",        label: "HR + Policies", icon: "📋" },
+      { id: "tools",     label: "Quick Links",   icon: "🔗" },
+    ];
+
+    const ANNOUNCEMENTS = [
+      { id:1, tag:"Leadership", tagColor:"#b8966a", title:"Q2 2026 All-Hands — Save the Date", body:"Our quarterly all-hands meeting is scheduled for May 14th at 10:00 AM EST. Zoom link and full agenda will be distributed by end of week. All staff are expected to attend.", author:"Rob Rule", role:"Principal", date:"Apr 21, 2026", avatar:"RR" },
+      { id:2, tag:"IT Notice",  tagColor:"#5a8ab0", title:"New VPN Protocol Rollout This Friday", body:"IT will deploy updated VPN client software to all workstations Friday evening. Please ensure your laptop is connected + powered on overnight to receive the update automatically.", author:"Systems Admin", role:"IT Department", date:"Apr 19, 2026", avatar:"IT" },
+      { id:3, tag:"HR",         tagColor:"#6a9e7a", title:"Updated PTO Request Process Effective May 1", body:"HR has simplified the PTO request workflow. All requests are now submitted via the new HR portal. See the HR + Policies section for updated guidelines and the step-by-step walkthrough.", author:"Human Resources", role:"HR Department", date:"Apr 17, 2026", avatar:"HR" },
+      { id:4, tag:"Studio",     tagColor:"#a07060", title:"Congrats — Emmi Midtown Wins AIA Georgia Award", body:"We are proud to share that the Emmi Midtown project has been recognized with an AIA Georgia Design Award. A huge congratulations to the entire project team. Details to follow at the all-hands.", author:"Dan Rutulante", role:"Principal", date:"Apr 14, 2026", avatar:"DR" },
+    ];
+
+    const DOCUMENTS = [
+      { name:"RJTR Brand Standards Guide 2026",  type:"PDF",  size:"4.2 MB",  updated:"Apr 10, 2026", dept:"Marketing" },
+      { name:"Project Intake Form",              type:"DOCX", size:"128 KB",  updated:"Apr 5, 2026",  dept:"Operations" },
+      { name:"Employee Handbook v7",             type:"PDF",  size:"2.8 MB",  updated:"Mar 28, 2026", dept:"HR" },
+      { name:"Q1 2026 Financial Report",         type:"XLSX", size:"890 KB",  updated:"Mar 31, 2026", dept:"Finance" },
+      { name:"IT Security Policy",               type:"PDF",  size:"1.1 MB",  updated:"Feb 14, 2026", dept:"IT" },
+      { name:"Client NDA Template",              type:"DOCX", size:"76 KB",   updated:"Jan 22, 2026", dept:"Legal" },
+      { name:"BIM Standards Manual",             type:"PDF",  size:"6.4 MB",  updated:"Mar 15, 2026", dept:"Design" },
+      { name:"Consultant Agreement Template",    type:"DOCX", size:"210 KB",  updated:"Feb 28, 2026", dept:"Legal" },
+    ];
+
+    const EMPLOYEES = [
+      { name:"Rob Rule",         role:"Principal",           dept:"Leadership",      ext:"x100", email:"rrule@rjtrdesign.com",      status:"in",     avatar:"RR" },
+      { name:"Dan Joy",          role:"Principal",           dept:"Leadership",      ext:"x101", email:"djoy@rjtrdesign.com",       status:"in",     avatar:"DJ" },
+      { name:"Greg Blaylock",    role:"Principal",           dept:"Design",          ext:"x102", email:"gblaylock@rjtrdesign.com",  status:"remote", avatar:"GB" },
+      { name:"Jenn Wilson",      role:"Principal",           dept:"Operations",      ext:"x103", email:"jwilson@rjtrdesign.com",    status:"in",     avatar:"JW" },
+      { name:"Dan Rutulante",    role:"Principal",           dept:"Design",          ext:"x104", email:"drutulante@rjtrdesign.com", status:"in",     avatar:"DR" },
+      { name:"Bethany Harris",   role:"Principal",           dept:"Interior Design", ext:"x105", email:"bharris@rjtrdesign.com",    status:"remote", avatar:"BH" },
+      { name:"Scott Kirk",       role:"Principal",           dept:"Interior Design", ext:"x106", email:"skirk@rjtrdesign.com",      status:"in",     avatar:"SK" },
+      { name:"Bob Samolyk",      role:"Associate Principal", dept:"Design",          ext:"x110", email:"bsamolyk@rjtrdesign.com",   status:"in",     avatar:"BS" },
+      { name:"John Hopkins",     role:"Associate Principal", dept:"Architecture",    ext:"x111", email:"jhopkins@rjtrdesign.com",   status:"out",    avatar:"JH" },
+      { name:"John Morgan",      role:"Associate Principal", dept:"Architecture",    ext:"x112", email:"jmorgan@rjtrdesign.com",    status:"in",     avatar:"JM" },
+      { name:"Gary Bercy",       role:"Associate Principal", dept:"Design",          ext:"x113", email:"gbercy@rjtrdesign.com",     status:"remote", avatar:"GA" },
+      { name:"Rebecca Anderson", role:"Associate Principal", dept:"Interior Design", ext:"x114", email:"randerson@rjtrdesign.com",  status:"in",     avatar:"RA" },
+      { name:"David Fulmer",     role:"Associate Principal", dept:"Architecture",    ext:"x115", email:"dfulmer@rjtrdesign.com",    status:"in",     avatar:"DF" },
+      { name:"Richard Kemp",     role:"Associate Principal", dept:"Hospitality",     ext:"x116", email:"rkemp@rjtrdesign.com",      status:"remote", avatar:"RK" },
+      { name:"Christy Emanski",  role:"Senior Associate",    dept:"Architecture",    ext:"x120", email:"cemanski@rjtrdesign.com",   status:"in",     avatar:"CE" },
+      { name:"Jeff Purdy",       role:"Senior Associate",    dept:"Architecture",    ext:"x121", email:"jpurdy@rjtrdesign.com",     status:"in",     avatar:"JP" },
+      { name:"Jason Bochenek",   role:"Senior Associate",    dept:"Architecture",    ext:"x122", email:"jbochenek@rjtrdesign.com",  status:"out",    avatar:"JB" },
+      { name:"Darcy Lindley",    role:"Senior Associate",    dept:"Interior Design", ext:"x123", email:"dlindley@rjtrdesign.com",   status:"in",     avatar:"DL" },
+      { name:"Matt Greist",      role:"Senior Associate",    dept:"Architecture",    ext:"x124", email:"mgreist@rjtrdesign.com",    status:"remote", avatar:"MG" },
+      { name:"Lucas Bridges",    role:"Sr. Associate / BIM", dept:"Technology",      ext:"x125", email:"lbridges@rjtrdesign.com",   status:"in",     avatar:"LB" },
+      { name:"Dustin Shue",      role:"Senior Associate",    dept:"Architecture",    ext:"x126", email:"dshue@rjtrdesign.com",      status:"in",     avatar:"DS" },
+      { name:"Jonathan Youssef", role:"Senior Associate",    dept:"Interior Design", ext:"x127", email:"jyoussef@rjtrdesign.com",   status:"remote", avatar:"JY" },
+      { name:"Hyeon Shin",       role:"Senior Designer",     dept:"Design",          ext:"x130", email:"hyshin@rjtrdesign.com",     status:"in",     avatar:"HS" },
+      { name:"Eric Schunk",      role:"Senior Designer",     dept:"Design",          ext:"x131", email:"eschunk@rjtrdesign.com",    status:"in",     avatar:"ES" },
+    ];
+
+    const DEPTS = ["All Departments","Leadership","Architecture","Design","Interior Design","Hospitality","Operations","Technology","Finance","IT","Legal"];
+
+    const HR_ITEMS = [
+      { title:"Employee Handbook",      desc:"Company policies, code of conduct + workplace expectations.",                icon:"📘", badge:"Updated" },
+      { title:"Benefits + Insurance",   desc:"Health, dental, vision, 401k enrollment + life insurance details.",          icon:"🏥", badge:null },
+      { title:"PTO + Leave Policy",     desc:"Vacation, sick leave, FMLA + holiday schedule. New process May 1.",          icon:"🗓️", badge:"New Process" },
+      { title:"Performance Reviews",    desc:"Review cycles, goal-setting templates + self-evaluation forms.",             icon:"⭐", badge:null },
+      { title:"Training + Development", desc:"Available courses, ARE prep resources + reimbursement policy.",              icon:"🎓", badge:null },
+      { title:"Workplace Safety",       desc:"Emergency procedures, incident reporting + compliance resources.",            icon:"🛡️", badge:null },
+    ];
+
+    const QUICK_LINKS = [
+      { name:"Company Email",      icon:"✉️", color:"#5a8ab0" },
+      { name:"Project Management", icon:"📊", color:"#8a70a0" },
+      { name:"Time Tracking",      icon:"⏱️", color:"#b07840" },
+      { name:"Expense Reports",    icon:"💳", color:"#4a8a5a" },
+      { name:"IT Help Desk",       icon:"🖥️", color:"#a05050" },
+      { name:"VPN Access",         icon:"🔒", color:"#3a8a7a" },
+      { name:"Design Assets",      icon:"🎨", color:"#b8966a" },
+      { name:"Client Portal",      icon:"🌐", color:"#4a70a0" },
+      { name:"Video Conferencing", icon:"📹", color:"#7a50a0" },
+      { name:"HR Portal",          icon:"👔", color:"#4a7a6a" },
+      { name:"Office 365",         icon:"📝", color:"#a06040" },
+      { name:"Payroll",            icon:"💵", color:"#4a8a60" },
+    ];
+
+    const TYPE_COLORS  = { PDF:"#a05050", DOCX:"#5a80b0", XLSX:"#4a8a5a" };
+    const STATUS_META  = { in:["#6a9a7a","In Office"], remote:["#b8966a","Remote"], out:["#505050","Out Today"] };
+
+    const css = `
+      .ni{display:flex;align-items:center;gap:11px;padding:10px 16px;cursor:pointer;border-radius:3px;transition:all .15s;font-family:'Jost',sans-serif;font-size:11px;font-weight:600;color:#484840;margin-bottom:2px;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;}
+      .ni:hover{color:#b8966a;background:rgba(184,150,106,.06);}
+      .ni.on{color:#b8966a;background:rgba(184,150,106,.09);border-left:2px solid #b8966a;}
+      .card{background:#141414;border:1px solid #222;border-radius:5px;padding:22px;transition:border-color .15s;}
+      .card:hover{border-color:#2c2c2c;}
+      .pill{display:inline-block;padding:2px 8px;border-radius:2px;font-size:9px;font-weight:700;letter-spacing:.12em;font-family:'Jost',sans-serif;text-transform:uppercase;}
+      .btn{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:2px;cursor:pointer;font-family:'Jost',sans-serif;font-size:11px;font-weight:700;border:none;transition:all .15s;letter-spacing:.1em;text-transform:uppercase;}
+      .bg{background:#b8966a;color:#0e0e0e;} .bg:hover{background:#c8a67a;}
+      .bk{background:transparent;color:#484840;border:1px solid #242424;} .bk:hover{border-color:#b8966a;color:#b8966a;}
+      .inp{background:#0e0e0e;border:1px solid #242424;border-radius:2px;padding:8px 12px;color:#d8d0c8;font-family:'Jost',sans-serif;font-size:12px;outline:none;transition:border-color .15s;}
+      .inp:focus{border-color:#b8966a;} .inp::placeholder{color:#303030;}
+      .av{width:40px;height:40px;border-radius:2px;background:#181818;border:1px solid #282828;display:flex;align-items:center;justify-content:center;font-family:'Jost',sans-serif;font-size:10px;font-weight:700;color:#b8966a;letter-spacing:.05em;flex-shrink:0;}
+      .avs{width:30px;height:30px;border-radius:2px;background:#181818;border:1px solid #282828;display:flex;align-items:center;justify-content:center;font-family:'Jost',sans-serif;font-size:9px;font-weight:700;color:#b8966a;letter-spacing:.05em;flex-shrink:0;}
+      .lbl{font-family:'Jost',sans-serif;font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:#383830;margin-bottom:8px;}
+      .h1{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:#e0d8d0;letter-spacing:-.01em;}
+      .sub{font-family:'Jost',sans-serif;font-size:12px;color:#3c3c38;margin-bottom:26px;margin-top:4px;letter-spacing:.02em;}
+      .dr{border-radius:3px;transition:background .12s;cursor:pointer;} .dr:hover{background:rgba(255,255,255,.025);}
+      .ec:hover{border-color:#2c2c2c!important;}
+      .lc{transition:all .18s;cursor:pointer;} .lc:hover{border-color:#b8966a!important;transform:translateY(-2px);}
+      .hc{cursor:pointer;} .hc:hover{border-color:#b8966a!important;}
+      .sc{background:#141414;border:1px solid #1e1e1e;border-radius:5px;padding:20px;}
+      select.inp option{background:#141414;}
+      a{color:#b8966a;text-decoration:none;} a:hover{text-decoration:underline;}
+    `;
+
+    function Intranet() {
+      const [active, setActive]       = useState("home");
+      const [search, setSearch]       = useState("");
+      const [deptFilter, setDeptFilter] = useState("All Departments");
+      const [sidebar, setSidebar]     = useState(true);
+
+      const today = new Date().toLocaleDateString("en-US", {
+        weekday:"long", month:"long", day:"numeric", year:"numeric",
+      });
+
+      const filteredEmp = EMPLOYEES.filter(e => {
+        const q = search.toLowerCase();
+        const ok = !q || [e.name, e.role, e.dept].some(s => s.toLowerCase().includes(q));
+        return ok && (deptFilter === "All Departments" || e.dept === deptFilter);
+      });
+
+      return (
+        <div style={{fontFamily:"'Helvetica Neue',Arial,sans-serif",background:"#0e0e0e",minHeight:"100vh",display:"flex",color:"#d8d0c8"}}>
+          <style>{css}</style>
+
+          {/* SIDEBAR */}
+          <div style={{width:sidebar?222:0,minHeight:"100vh",background:"#080808",borderRight:"1px solid #181818",display:"flex",flexDirection:"column",overflow:"hidden",transition:"width .25s",flexShrink:0}}>
+            <div style={{padding:"22px 18px 18px",borderBottom:"1px solid #181818"}}>
+              <img
+                src="https://rjtrdesign.com/wp-content/uploads/2020/09/Rule-Joy-Trammell-Rubio-White-Combined-logo-High-Res-Inverted.png"
+                alt="Rule Joy Trammell + Rubio"
+                style={{width:"100%",maxWidth:168,opacity:.85,display:"block"}}
+                onError={e=>{e.target.style.display="none";e.target.nextSibling.style.display="block";}}
+              />
+              <div style={{display:"none",fontFamily:"'Cormorant Garamond',serif",fontSize:14,fontWeight:600,color:"#b8966a",letterSpacing:".04em",lineHeight:1.4}}>
+                RULE JOY TRAMMELL + RUBIO
+              </div>
+              <div style={{fontFamily:"'Jost',sans-serif",fontSize:9,color:"#2c2c28",letterSpacing:".18em",marginTop:7,textTransform:"uppercase",whiteSpace:"nowrap"}}>Internal Portal</div>
+            </div>
+            <nav style={{padding:"12px 8px",flex:1}}>
+              {NAV.map(n => (
+                <div key={n.id} className={`ni${active===n.id?" on":""}`} onClick={()=>setActive(n.id)}>
+                  <span style={{fontSize:13,opacity:.6}}>{n.icon}</span>{n.label}
+                </div>
+              ))}
+            </nav>
+            <div style={{padding:"13px 16px",borderTop:"1px solid #181818",display:"flex",alignItems:"center",gap:9}}>
+              <div className="avs">YN</div>
+              <div style={{whiteSpace:"nowrap",overflow:"hidden"}}>
+                <div style={{fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:600,color:"#807060"}}>Your Name</div>
+                <div style={{fontFamily:"'Jost',sans-serif",fontSize:9,color:"#2c2c28",letterSpacing:".02em"}}>yourname@rjtrdesign.com</div>
+              </div>
+            </div>
+          </div>
+
+          {/* MAIN */}
+          <div style={{flex:1,overflow:"auto",display:"flex",flexDirection:"column"}}>
+            {/* Topbar */}
+            <div style={{background:"#080808",borderBottom:"1px solid #181818",padding:"12px 30px",display:"flex",alignItems:"center",justifyContent:"space-between",position:"sticky",top:0,zIndex:10}}>
+              <div style={{display:"flex",alignItems:"center",gap:14}}>
+                <button onClick={()=>setSidebar(!sidebar)} style={{background:"none",border:"none",color:"#343430",cursor:"pointer",fontSize:17,lineHeight:1,padding:0}}>☰</button>
+                <div style={{fontFamily:"'Jost',sans-serif",fontSize:10,color:"#2e2e2a",letterSpacing:".1em",textTransform:"uppercase"}}>{today}</div>
+              </div>
+              <div style={{display:"flex",alignItems:"center",gap:9}}>
+                <input className="inp" placeholder="Search intranet..." style={{width:200}} value={search} onChange={e=>setSearch(e.target.value)} />
+                <button className="btn bk" style={{padding:"7px 11px",fontSize:13}}>🔔</button>
+              </div>
+            </div>
+
+            {/* PAGE CONTENT */}
+            <div style={{padding:"34px 38px",flex:1}}>
+
+              {/* DASHBOARD */}
+              {active==="home" && (
+                <div>
+                  <div style={{marginBottom:30}}>
+                    <div className="lbl">Atlanta, Georgia · Architecture + Interior Design</div>
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:42,fontWeight:600,color:"#e0d8d0",lineHeight:1.05,letterSpacing:"-.015em"}}>Welcome to RJTR Design.</div>
+                    <div style={{fontFamily:"'Jost',sans-serif",fontSize:12,color:"#383830",marginTop:7,letterSpacing:".03em"}}>Celebrating 20 years of award-winning architectural + interior design.</div>
+                  </div>
+
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:13,marginBottom:28}}>
+                    {[
+                      {label:"Active Staff",  value:"100+", delta:"Atlanta · Est. 2005"},
+                      {label:"Open Projects", value:"14",   delta:"3 due this week"},
+                      {label:"Documents",     value:"248",  delta:"6 updated today"},
+                      {label:"IT Tickets",    value:"3",    delta:"1 urgent"},
+                    ].map(s => (
+                      <div key={s.label} className="sc">
+                        <div className="lbl">{s.label}</div>
+                        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:42,fontWeight:700,color:"#b8966a",lineHeight:1}}>{s.value}</div>
+                        <div style={{fontFamily:"'Jost',sans-serif",fontSize:10,color:"#303028",marginTop:5,letterSpacing:".04em"}}>{s.delta}</div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{display:"grid",gridTemplateColumns:"1.6fr 1fr",gap:20}}>
+                    <div className="card">
+                      <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:18}}>
+                        <div className="lbl" style={{marginBottom:0}}>Latest Announcements</div>
+                        <button className="btn bk" style={{padding:"4px 11px"}} onClick={()=>setActive("news")}>View All →</button>
+                      </div>
+                      {ANNOUNCEMENTS.slice(0,2).map(a => (
+                        <div key={a.id} style={{paddingBottom:14,marginBottom:14,borderBottom:"1px solid #1c1c1c"}}>
+                          <span className="pill" style={{background:`${a.tagColor}18`,color:a.tagColor,marginBottom:7,display:"inline-block"}}>{a.tag}</span>
+                          <div style={{fontFamily:"'Jost',sans-serif",fontWeight:600,fontSize:12,color:"#a09080",marginBottom:4}}>{a.title}</div>
+                          <div style={{fontFamily:"'Jost',sans-serif",fontSize:12,color:"#383830",lineHeight:1.65}}>{a.body.substring(0,105)}...</div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="card">
+                      <div className="lbl">Quick Access</div>
+                      <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:8}}>
+                        {QUICK_LINKS.slice(0,6).map(l => (
+                          <div key={l.name} className="card lc" style={{padding:"10px 12px",display:"flex",alignItems:"center",gap:8}}>
+                            <span style={{fontSize:14}}>{l.icon}</span>
+                            <span style={{fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:600,color:"#484840",letterSpacing:".06em",textTransform:"uppercase"}}>{l.name}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="card" style={{marginTop:20}}>
+                    <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:16}}>
+                      <div className="lbl" style={{marginBottom:0}}>Recently Updated Documents</div>
+                      <button className="btn bk" style={{padding:"4px 11px"}} onClick={()=>setActive("docs")}>View All →</button>
+                    </div>
+                    {DOCUMENTS.slice(0,4).map((d,i) => (
+                      <div key={i} className="dr" style={{display:"flex",alignItems:"center",padding:"10px 7px",gap:10}}>
+                        <span className="pill" style={{background:`${TYPE_COLORS[d.type]}18`,color:TYPE_COLORS[d.type],minWidth:42,textAlign:"center"}}>{d.type}</span>
+                        <span style={{flex:1,fontFamily:"'Jost',sans-serif",fontSize:12,color:"#908070"}}>{d.name}</span>
+                        <span style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"#343430",minWidth:88}}>{d.dept}</span>
+                        <span style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"#282820",minWidth:100,textAlign:"right"}}>{d.updated}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{marginTop:20,background:"#111",border:"1px solid #1c1c1c",borderLeft:"3px solid #b8966a",borderRadius:4,padding:"18px 22px"}}>
+                    <div className="lbl" style={{marginBottom:8}}>Our Mission</div>
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:17,fontStyle:"italic",color:"#706050",lineHeight:1.75}}>
+                      "The mission of RJTR is to create + nurture a work environment which consistently exceeds the needs + expectations of our associates, our clients, + our principals."
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* ANNOUNCEMENTS */}
+              {active==="news" && (
+                <div>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:26}}>
+                    <div>
+                      <div className="lbl">Studio Updates</div>
+                      <div className="h1">Announcements + News</div>
+                      <div className="sub">Company-wide updates, department news + important notices.</div>
+                    </div>
+                    <button className="btn bg">+ New Announcement</button>
+                  </div>
+                  {ANNOUNCEMENTS.map(a => (
+                    <div key={a.id} className="card" style={{display:"flex",gap:16,marginBottom:12}}>
+                      <div className="av" style={{marginTop:2}}>{a.avatar}</div>
+                      <div style={{flex:1}}>
+                        <div style={{display:"flex",alignItems:"center",gap:9,marginBottom:8}}>
+                          <span className="pill" style={{background:`${a.tagColor}18`,color:a.tagColor}}>{a.tag}</span>
+                          <span style={{fontFamily:"'Jost',sans-serif",fontSize:10,color:"#282820",letterSpacing:".05em"}}>{a.date}</span>
+                        </div>
+                        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:22,fontWeight:600,color:"#d0c8c0",marginBottom:8}}>{a.title}</div>
+                        <div style={{fontFamily:"'Jost',sans-serif",fontSize:12,color:"#404038",lineHeight:1.8,marginBottom:12}}>{a.body}</div>
+                        <div style={{display:"flex",alignItems:"center",gap:8}}>
+                          <span style={{fontFamily:"'Jost',sans-serif",fontSize:11,fontWeight:600,color:"#605850"}}>{a.author}</span>
+                          <span style={{color:"#282828"}}>·</span>
+                          <span style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"#343430"}}>{a.role}</span>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* DOCUMENTS */}
+              {active==="docs" && (
+                <div>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:26}}>
+                    <div>
+                      <div className="lbl">Resources</div>
+                      <div className="h1">Documents + Files</div>
+                      <div className="sub">Company documents, templates, reports + shared resources.</div>
+                    </div>
+                    <button className="btn bg">+ Upload File</button>
+                  </div>
+                  <div className="card">
+                    <div style={{display:"flex",gap:9,marginBottom:18}}>
+                      <input className="inp" placeholder="Search documents..." style={{flex:1}} />
+                      <select className="inp" style={{width:155}}>
+                        {DEPTS.map(d => <option key={d}>{d}</option>)}
+                      </select>
+                    </div>
+                    <div style={{borderBottom:"1px solid #1c1c1c",marginBottom:6}}>
+                      <div style={{display:"flex",padding:"5px 7px",fontFamily:"'Jost',sans-serif",fontSize:9,color:"#282820",letterSpacing:".1em",textTransform:"uppercase"}}>
+                        <span style={{width:56}}>Type</span>
+                        <span style={{flex:1}}>Name</span>
+                        <span style={{width:108}}>Department</span>
+                        <span style={{width:66}}>Size</span>
+                        <span style={{width:108,textAlign:"right"}}>Updated</span>
+                      </div>
+                    </div>
+                    {DOCUMENTS.map((d,i) => (
+                      <div key={i} className="dr" style={{display:"flex",alignItems:"center",padding:"11px 7px"}}>
+                        <span className="pill" style={{background:`${TYPE_COLORS[d.type]}18`,color:TYPE_COLORS[d.type],width:50,textAlign:"center"}}>{d.type}</span>
+                        <span style={{flex:1,fontFamily:"'Jost',sans-serif",fontSize:12,color:"#888070",paddingLeft:7}}>{d.name}</span>
+                        <span style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"#383830",width:108}}>{d.dept}</span>
+                        <span style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"#2a2a28",width:66}}>{d.size}</span>
+                        <span style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"#242420",width:108,textAlign:"right"}}>{d.updated}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* DIRECTORY */}
+              {active==="directory" && (
+                <div>
+                  <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:26}}>
+                    <div>
+                      <div className="lbl">Our Team</div>
+                      <div className="h1">Employee Directory</div>
+                      <div className="sub">Principals, associates + staff · 100+ professionals · Atlanta, GA</div>
+                    </div>
+                    <div style={{display:"flex",gap:9}}>
+                      <input className="inp" placeholder="Search name, role, dept..." style={{width:220}} value={search} onChange={e=>setSearch(e.target.value)} />
+                      <select className="inp" style={{width:165}} value={deptFilter} onChange={e=>setDeptFilter(e.target.value)}>
+                        {DEPTS.map(d => <option key={d}>{d}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:12}}>
+                    {filteredEmp.map((e,i) => (
+                      <div key={i} className="card ec" style={{display:"flex",gap:13,alignItems:"flex-start",cursor:"pointer"}}>
+                        <div className="av" style={{width:44,height:44}}>{e.avatar}</div>
+                        <div style={{flex:1,minWidth:0}}>
+                          <div style={{fontFamily:"'Jost',sans-serif",fontSize:13,fontWeight:600,color:"#908070",marginBottom:1,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{e.name}</div>
+                          <div style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"#383830",marginBottom:7,letterSpacing:".02em"}}>{e.role}</div>
+                          <div style={{fontFamily:"'Jost',sans-serif",fontSize:10,color:"#282820",marginBottom:6,letterSpacing:".02em"}}>{e.email}</div>
+                          <div style={{display:"flex",alignItems:"center",justifyContent:"space-between"}}>
+                            <span style={{fontFamily:"'Jost',sans-serif",fontSize:10,color:"#2a2a28"}}>{e.dept} · {e.ext}</span>
+                            <span style={{display:"flex",alignItems:"center",gap:4,fontFamily:"'Jost',sans-serif",fontSize:9,color:STATUS_META[e.status][0],letterSpacing:".08em",textTransform:"uppercase"}}>
+                              <span style={{width:5,height:5,borderRadius:"50%",background:STATUS_META[e.status][0],display:"inline-block"}} />
+                              {STATUS_META[e.status][1]}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* HR */}
+              {active==="hr" && (
+                <div>
+                  <div className="lbl">People + Culture</div>
+                  <div className="h1">HR + Policies</div>
+                  <div className="sub">Benefits, policies, forms + company guidelines.</div>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(280px,1fr))",gap:12,marginBottom:24}}>
+                    {HR_ITEMS.map((h,i) => (
+                      <div key={i} className="card hc">
+                        <div style={{display:"flex",justifyContent:"space-between",alignItems:"flex-start",marginBottom:11}}>
+                          <span style={{fontSize:24}}>{h.icon}</span>
+                          {h.badge && <span className="pill" style={{background:"rgba(184,150,106,.12)",color:"#b8966a"}}>{h.badge}</span>}
+                        </div>
+                        <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:600,color:"#d0c8c0",marginBottom:6}}>{h.title}</div>
+                        <div style={{fontFamily:"'Jost',sans-serif",fontSize:12,color:"#383830",lineHeight:1.7,marginBottom:13}}>{h.desc}</div>
+                        <button className="btn bk" style={{fontSize:10,padding:"5px 13px"}}>View Resources →</button>
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{background:"#111",border:"1px solid #1c1c1c",borderLeft:"3px solid #b8966a",borderRadius:4,padding:"18px 22px",marginBottom:14}}>
+                    <div className="lbl" style={{marginBottom:8}}>Our Mission</div>
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:17,fontStyle:"italic",color:"#686050",lineHeight:1.8}}>
+                      "The mission of RJTR is to create + nurture a work environment which consistently exceeds the needs + expectations of our associates, our clients, + our principals."
+                    </div>
+                  </div>
+                  <div className="card" style={{display:"flex",alignItems:"center",gap:18}}>
+                    <span style={{fontSize:28}}>📞</span>
+                    <div>
+                      <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:18,fontWeight:600,color:"#d0c8c0",marginBottom:4}}>Need HR Assistance?</div>
+                      <div style={{fontFamily:"'Jost',sans-serif",fontSize:11,color:"#383830",letterSpacing:".02em"}}>
+                        <a href="mailto:careers@rjtrdesign.com">careers@rjtrdesign.com</a>
+                        {" · "}
+                        <a href="tel:7706611492">770-661-1492</a>
+                        {" · 300 Galleria Pkwy, Suite 740, Atlanta, GA 30339"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* QUICK LINKS */}
+              {active==="tools" && (
+                <div>
+                  <div className="lbl">Tools + Resources</div>
+                  <div className="h1">Quick Links</div>
+                  <div className="sub">Fast access to the platforms + resources you use every day.</div>
+                  <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(162px,1fr))",gap:11}}>
+                    {QUICK_LINKS.map((l,i) => (
+                      <div key={i} className="card lc" style={{textAlign:"center",padding:"20px 13px"}}>
+                        <div style={{fontSize:26,marginBottom:9}}>{l.icon}</div>
+                        <div style={{fontFamily:"'Jost',sans-serif",fontSize:10,fontWeight:700,color:"#585048",letterSpacing:".1em",textTransform:"uppercase",marginBottom:8}}>{l.name}</div>
+                        <div style={{width:18,height:2,background:l.color,borderRadius:1,margin:"0 auto",opacity:.55}} />
+                      </div>
+                    ))}
+                  </div>
+                  <div className="card" style={{marginTop:18}}>
+                    <div style={{fontFamily:"'Cormorant Garamond',serif",fontSize:20,fontWeight:600,color:"#d0c8c0",marginBottom:12}}>Request a New Tool or Access</div>
+                    <div style={{display:"flex",gap:9}}>
+                      <input className="inp" placeholder="Tool or resource name..." style={{flex:1}} />
+                      <input className="inp" placeholder="Business justification..." style={{flex:2}} />
+                      <button className="btn bg">Submit</button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+            </div>
+
+            {/* Footer */}
+            <div style={{padding:"13px 38px",borderTop:"1px solid #181818",display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+              <div style={{fontFamily:"'Jost',sans-serif",fontSize:10,color:"#222220",letterSpacing:".05em"}}>
+                © 2026 Rule Joy Trammell + Rubio, LLC · Internal Use Only ·{" "}
+                <a href="https://rjtrdesign.com" target="_blank" rel="noreferrer" style={{color:"#2e2e28"}}>rjtrdesign.com</a>
+              </div>
+              <div style={{fontFamily:"'Jost',sans-serif",fontSize:10,color:"#222220",letterSpacing:".05em"}}>
+                Portal v1.1 · IT Support: 770-661-1492
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById("root"));
+    root.render(<Intranet />);
+  </script>
+</body>
+</html>
