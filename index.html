@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ARE PA + PPD + PDD Study Aid</title>
+<!-- ui-refresh fonts --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link id="ui-refresh-fonts" rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
 <style>
   /* ── PALETTE ── */
   :root {
@@ -614,6 +615,505 @@
   // Apply saved theme before paint to avoid a flash
   (function(){ try { document.documentElement.setAttribute('data-theme', localStorage.getItem('areStudy.theme') === 'light' ? 'light' : 'dark'); } catch(e){} })();
 </script>
+<style id="ui-refresh">
+  /* ===== UI REFRESH: architectural drafting ===== */
+  :root, :root[data-theme="dark"] {
+    --bg: #151618;
+    --surface: #1c1d20;
+    --surface2: #232529;
+    --inset: #191a1d;
+    --border: #2e3035;
+    --border2: #43464d;
+    --hover: #26282c;
+    --row-hover: #222428;
+    --rule: #8b8982;
+    --text: #e8e6e1;
+    --text-bright: #f5f3ee;
+    --muted: #a3a19a;
+    --strong: #f5f3ee;
+    --ok: #8cc09c;
+    --bad: #e9958a;
+    --green: #8cc09c;
+    --red: #e9958a;
+    --gold: #c99a45;
+    --gold-ink: #d9b26a;
+    --on-gold: #17140e;
+    --gold-bg: #262117;
+    --pri-bg: #201e1a;
+    --pri-hover: #28251e;
+    --callout-bg: #191a1d;
+    --know-bg: #1b2620;
+    --review-bg: #2b1e1c;
+    --warn-bg: #2b1e1c;
+    --indigo: #93a9bf;
+    --watermark: transparent;
+    --card-shadow: rgba(0,0,0,.35);
+    --accent: #26282c;
+    --accent2: #43464d;
+    --nav-bg: #111214;
+    --nav-text: #e8e6e1;
+    --field: #73767e;
+    --all3: #e29a90;
+    --both: #d4b47d;
+    --pa: #aeaadb;
+    --pcm: #aeaadb;
+    --ppd: #93b6d3;
+    --pjm: #93b6d3;
+    --pdd: #8fc4b8;
+    --ce: #8fc4b8;
+    --font-sans: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --r: 2px;
+    --s1: 8px; --s2: 16px; --s3: 24px; --s4: 32px; --s5: 48px;
+    color-scheme: dark;
+  }
+  :root[data-theme="light"] {
+    --bg: #fbfaf7;
+    --surface: #ffffff;
+    --surface2: #f4f2ec;
+    --inset: #f7f5f0;
+    --border: #e4e0d6;
+    --border2: #cbc6b9;
+    --hover: #f1eee6;
+    --row-hover: #f7f4ec;
+    --rule: #1d1d1f;
+    --text: #1d1d1f;
+    --text-bright: #111112;
+    --muted: #5d5b56;
+    --strong: #111112;
+    --ok: #2d6843;
+    --bad: #a2372a;
+    --green: #2d6843;
+    --red: #a2372a;
+    --gold: #b8862b;
+    --gold-ink: #835e18;
+    --on-gold: #1d1d1f;
+    --gold-bg: #faf4e6;
+    --pri-bg: #fbf6ea;
+    --pri-hover: #f6eedb;
+    --callout-bg: #f7f5f0;
+    --know-bg: #eef5f0;
+    --review-bg: #fbefed;
+    --warn-bg: #fbefed;
+    --indigo: #4a5f75;
+    --watermark: transparent;
+    --card-shadow: rgba(40,36,28,.12);
+    --accent: #f1eee6;
+    --accent2: #cbc6b9;
+    --nav-bg: #fbfaf7;
+    --nav-text: #1d1d1f;
+    --field: #8c877b;
+    --all3: #93402f;
+    --both: #7d5d22;
+    --pa: #55508a;
+    --pcm: #55508a;
+    --ppd: #365f7e;
+    --pjm: #365f7e;
+    --pdd: #33685e;
+    --ce: #33685e;
+    color-scheme: light;
+  }
+  .badge-all3, .toc-all3, .f-all3, .tl-d-all3, [class*="tl-"][style*="var(--all3)"] { --d: var(--all3); }
+  .badge-both, .toc-both, .f-both, .tl-d-both, [class*="tl-"][style*="var(--both)"] { --d: var(--both); }
+  .badge-pa, .toc-pa, .f-pa, .tl-d-pa, [class*="tl-"][style*="var(--pa)"] { --d: var(--pa); }
+  .badge-ppd, .toc-ppd, .f-ppd, .tl-d-ppd, [class*="tl-"][style*="var(--ppd)"] { --d: var(--ppd); }
+  .badge-pdd, .toc-pdd, .f-pdd, .tl-d-pdd, [class*="tl-"][style*="var(--pdd)"] { --d: var(--pdd); }
+  .badge-pcm, .toc-pcm, .f-pcm, .tl-d-pcm, [class*="tl-"][style*="var(--pcm)"] { --d: var(--pcm); }
+  .badge-pjm, .toc-pjm, .f-pjm, .tl-d-pjm, [class*="tl-"][style*="var(--pjm)"] { --d: var(--pjm); }
+  .badge-ce, .toc-ce, .f-ce, .tl-d-ce, [class*="tl-"][style*="var(--ce)"] { --d: var(--ce); }
+  .f-review { --d: var(--bad); }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: var(--font-sans); font-size: 15px; line-height: 1.5;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  button, input, select, textarea { font-family: inherit; }
+  .ico { width: 16px; height: 16px; flex: none; display: inline-block; vertical-align: -3px; }
+  .rev { display: inline-flex; color: var(--gold-ink); margin-left: 6px; vertical-align: 1px; }
+  .rev svg { display: block; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  .nav-tab:focus-visible { outline-offset: -4px; }
+  ::selection { background: color-mix(in srgb, var(--gold) 30%, transparent); }
+  mark, mark.sh { background: color-mix(in srgb, var(--gold) 32%, transparent); color: inherit; padding: 0 1px; }
+
+  /* ---- quiet tags (badges, toc tags, section tags) ---- */
+  .card-division-badge, .qz-badge, .toc-tag, .sum-section-tag, .new-badge {
+    background: color-mix(in srgb, var(--d, var(--muted)) 9%, transparent) !important;
+    color: var(--d, var(--muted)) !important;
+    border: 1px solid color-mix(in srgb, var(--d, var(--muted)) 42%, transparent);
+    border-radius: var(--r);
+    font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; line-height: 1.3;
+    letter-spacing: .1em; text-transform: uppercase; padding: 3px 8px;
+  }
+  .new-badge { --d: var(--all3); }
+
+  /* ---- NAV ---- */
+  .nav { background: var(--nav-bg); border-bottom: 1px solid var(--border2); box-shadow: none; padding: 0 24px; }
+  .nav::after { display: none; }
+  .nav-brand {
+    color: var(--text); font-family: var(--font-sans); font-weight: 600; font-size: 12px;
+    letter-spacing: .12em; padding: 12px 20px 12px 0; margin-right: 8px; border-right: 1px solid var(--border);
+  }
+  .nav-brand > div:first-child > div:first-child {
+    font-family: var(--font-mono); font-weight: 500; font-size: 9.5px !important;
+    letter-spacing: .18em !important; opacity: 1 !important; color: var(--muted); margin-bottom: 3px !important;
+  }
+  .nav-brand-accent { display: none; }
+  .nav-tab {
+    color: var(--muted); font-family: var(--font-sans); font-weight: 500; font-size: 12px;
+    letter-spacing: .08em; padding: 18px 14px 16px; gap: 8px;
+    border-bottom: 2px solid transparent; transition: color .15s, border-color .15s;
+  }
+  .nav-tab:hover { color: var(--text); }
+  .nav-tab.active { color: var(--text); border-bottom-color: var(--gold); }
+  .nav-tab .ico { opacity: .85; }
+  .nav-tab.active .ico { opacity: 1; }
+  .nav-profile {
+    background: transparent; border: 1px solid var(--border2); color: var(--text);
+    border-radius: var(--r); padding: 4px 10px 4px 4px; font-size: 12px; font-weight: 500; letter-spacing: .02em;
+  }
+  .nav-profile:hover { background: var(--hover); border-color: var(--muted); }
+  .nav-profile-dot { width: 22px; height: 22px; border-radius: var(--r); font-family: var(--font-mono); font-weight: 500; font-size: 11px; }
+  .nav-profile-caret { display: inline-flex; opacity: .7; }
+  .nav-profile-caret .ico { width: 14px; height: 14px; }
+  .nav-theme {
+    background: transparent; border: 1px solid var(--border2); color: var(--text);
+    width: 34px; height: 34px; border-radius: var(--r);
+  }
+  .nav-theme:hover { background: var(--hover); border-color: var(--muted); transform: none; }
+  #navThemeIcon { display: inline-flex; }
+
+  /* ---- MODAL ---- */
+  .modal-overlay { background: rgba(17,18,20,.5); backdrop-filter: none; }
+  .modal {
+    background: var(--surface); border: 1px solid var(--border2); border-radius: 3px;
+    box-shadow: 0 16px 40px var(--card-shadow); padding: 24px;
+  }
+  .modal-head { margin-bottom: 8px; }
+  .modal-head h3 { font-size: 13px; font-weight: 600; letter-spacing: .12em; }
+  .modal-x { display: inline-flex; padding: 4px; border-radius: var(--r); }
+  .modal-sub { font-size: 13px; line-height: 1.6; }
+  .profile-list { gap: 8px; }
+  .profile-row { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r); padding: 8px 12px; }
+  .profile-row:hover { border-color: var(--border2); background: var(--hover); }
+  .profile-row.current { border-color: var(--gold); }
+  .profile-row .pr-dot { border-radius: var(--r); font-family: var(--font-mono); font-weight: 500; }
+  .profile-row .pr-name { font-weight: 500; }
+  .profile-row .pr-meta, .pr-current-tag { font-family: var(--font-mono); font-weight: 500; letter-spacing: .1em; }
+  .pr-current-tag { color: var(--gold-ink); }
+  .pr-btn { display: inline-flex; padding: 4px; border-radius: var(--r); }
+  .pr-btn .ico { width: 15px; height: 15px; }
+  .profile-add input { background: var(--surface); border: 1px solid var(--field); border-radius: var(--r); font-size: 14px; }
+  .profile-add input:focus { border-color: var(--gold); }
+
+  /* ---- PANELS / HEADINGS ---- */
+  #flashcards, #quiz { padding: 32px 24px 48px; }
+  #tables, #summary { padding: 32px 24px 48px; }
+  #tools { padding: 32px 24px 48px; max-width: 1080px; margin: 0 auto; }
+  .fc-header, .qz-header {
+    gap: 12px; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--rule);
+  }
+  .fc-header h2, .qz-header h2, #tables h2, .sum-header h2 {
+    font-size: 26px; font-weight: 600; letter-spacing: -.01em; text-transform: none; line-height: 1.2;
+  }
+  #tables h2 { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--rule); }
+  .sum-header { margin-bottom: 24px; padding-bottom: 16px; border-bottom: 1px solid var(--rule); }
+  .sum-header h2 { margin-bottom: 6px; }
+  .sum-header p { font-size: 13px; line-height: 1.55; }
+
+  /* ---- STATS ---- */
+  .fc-stats, .qz-stats { gap: 8px; }
+  .fc-stat, .qz-stat {
+    background: transparent; border: 1px solid var(--border); border-radius: var(--r);
+    padding: 6px 12px; font-family: var(--font-mono); font-weight: 500; font-size: 10px;
+    letter-spacing: .1em; color: var(--muted);
+  }
+  .fc-stat span, .qz-stat span { font-family: var(--font-mono); font-weight: 500; font-size: 17px; color: var(--text); margin-top: 2px; }
+  .stat-known span, .stat-correct span { color: var(--ok); }
+  .stat-review span, .stat-wrong span { color: var(--bad); }
+  .btn-ghost {
+    display: inline-flex; align-items: center; gap: 6px; padding: 6px 8px; border-radius: var(--r);
+    color: var(--muted); font-family: var(--font-sans); font-weight: 500; font-size: 11.5px; letter-spacing: .08em;
+  }
+  .btn-ghost:hover { color: var(--text); background: var(--hover); }
+  .btn-ghost .ico { width: 14px; height: 14px; }
+
+  /* ---- FILTER CHIPS + TABLE NAV ---- */
+  .fc-filters, .qz-filters { gap: 8px; margin-bottom: 16px; }
+  .table-nav { gap: 8px; margin-bottom: 24px; }
+  .fc-filter, .table-btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 12px; border: 1px solid var(--border2) !important; border-radius: var(--r);
+    background: transparent !important; color: var(--text) !important;
+    font-family: var(--font-sans); font-weight: 500; font-size: 11px; letter-spacing: .08em; line-height: 1.4;
+    transition: background .12s, border-color .12s, color .12s; user-select: none;
+  }
+  .table-btn { color: var(--muted) !important; }
+  .fc-filter:hover, .table-btn:hover { background: var(--hover) !important; color: var(--text) !important; border-color: var(--muted) !important; }
+  .fc-filter.active, .table-btn.active {
+    background: var(--text) !important; color: var(--bg) !important; border-color: var(--text) !important;
+  }
+  .fc-filter[class*=" f-"]::before {
+    content: ""; width: 8px; height: 8px; flex: none; background: var(--d); border-radius: 1px;
+  }
+  .fc-filter.active[class*=" f-"]::before { box-shadow: 0 0 0 1px var(--bg); }
+  .fc-progress, .qz-progress { height: 2px; background: var(--border); margin-bottom: 24px; border-radius: 0; }
+  .fc-progress-bar, .qz-progress-bar { background: var(--gold); }
+
+  /* ---- BUTTONS ---- */
+  .btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 9px 16px; border: 1px solid var(--border2); border-radius: var(--r);
+    font-family: var(--font-sans); font-weight: 600; font-size: 11.5px; line-height: 1.2; letter-spacing: .08em;
+    transition: background .12s, border-color .12s, color .12s;
+  }
+  .btn-know { background: transparent; border-color: var(--ok); color: var(--ok); }
+  .btn-know:hover { background: var(--know-bg); color: var(--ok); }
+  .btn-review { background: transparent; border-color: var(--bad); color: var(--bad); }
+  .btn-review:hover { background: var(--review-bg); color: var(--bad); }
+  .btn-outline { background: transparent; border-color: var(--border2); color: var(--text); }
+  .btn-outline:hover { border-color: var(--text); background: var(--hover); }
+  .btn-primary { background: var(--gold); border-color: var(--gold); color: var(--on-gold); }
+  .btn-primary:hover { background: color-mix(in srgb, var(--gold) 82%, #fff); border-color: color-mix(in srgb, var(--gold) 82%, #fff); color: var(--on-gold); }
+  .btn:disabled { opacity: .35; }
+  .btn:disabled:hover { background: transparent; }
+  #qzNextBtn::after {
+    content: ""; width: 16px; height: 16px; flex: none; background: currentColor;
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8h10M9 4l4 4-4 4'/%3E%3C/svg%3E") center / 16px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='none' stroke='black' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3 8h10M9 4l4 4-4 4'/%3E%3C/svg%3E") center / 16px no-repeat;
+  }
+  .fc-controls, .qz-controls { gap: 8px; margin-top: 16px; }
+  .fc-counter { font-family: var(--font-mono); font-weight: 500; font-size: 12px; letter-spacing: .04em; color: var(--muted); min-width: 72px; }
+
+  /* ---- FLASHCARD: drawing sheet ---- */
+  .card {
+    background: var(--surface); border: 1px solid var(--border2); border-radius: var(--r);
+    box-shadow: none; min-height: 320px; transition: border-color .15s;
+  }
+  .card[class*="div-"], .card { border-left: 1px solid var(--border2); }
+  .card:hover { box-shadow: none; border-color: var(--muted); }
+  .card::before { content: ""; position: absolute; left: 0; right: 0; top: 40px; border-top: 1px solid var(--border); pointer-events: none; }
+  .card-section-tag {
+    top: 0; left: 0; right: 132px; height: 40px; display: flex; align-items: center; padding: 0 20px;
+    font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .12em; color: var(--muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .card-division-badge { top: 9px; right: 14px; font-size: 10px; padding: 3px 8px; }
+  .card-watermark { display: none !important; }
+  .card-inner { padding: 72px 40px 32px; }
+  .card-q { font-size: 20px; font-weight: 500; line-height: 1.45; letter-spacing: -.003em; min-height: 104px; color: var(--text); }
+  .card-hint {
+    margin: 0; padding: 10px 20px; border-top: 1px solid var(--border); text-align: left;
+    font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .12em; color: var(--muted);
+  }
+  .card-a, .card[class*="div-"] .card-a {
+    margin-top: 24px; padding: 20px 0 0; background: transparent; border-top: 1px solid var(--rule);
+    border-radius: 0; font-size: 15.5px; line-height: 1.7; color: var(--text); text-align: left;
+  }
+  .card-a::before {
+    content: "Answer"; display: block; margin-bottom: 8px;
+    font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; line-height: 1.2; letter-spacing: .14em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .card-src, .qz-src {
+    margin-top: 16px; padding-top: 8px; border-top: 1px solid var(--border); opacity: 1;
+    font-family: var(--font-mono); font-weight: 400; font-size: 11px; line-height: 1.55; letter-spacing: .05em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .fc-complete, .qz-complete { padding: 56px 24px; border: 1px solid var(--border2); border-radius: var(--r); background: var(--surface); }
+  .fc-complete h3, .qz-complete h3 { font-size: 22px; font-weight: 600; text-transform: none; letter-spacing: -.01em; }
+  .qz-complete .qz-score { font-family: var(--font-mono); font-weight: 500; font-size: 44px; }
+
+  /* ---- QUIZ ---- */
+  .qz-card, .qz-card[class*="div-"] {
+    background: var(--surface); border: 1px solid var(--border2); border-radius: var(--r);
+    box-shadow: none; padding: 0 28px 24px; margin-bottom: 16px;
+  }
+  .qz-meta { margin: 0 -28px 24px; padding: 0 20px; min-height: 40px; border-bottom: 1px solid var(--border); gap: 12px; flex-wrap: nowrap; }
+  .qz-badge { flex: none; font-size: 10px; }
+  .qz-section { font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .12em; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .qz-q { font-size: 18px; font-weight: 500; line-height: 1.5; margin-bottom: 24px; }
+  .qz-options { gap: 8px; }
+  .qz-opt {
+    align-items: flex-start; gap: 12px; padding: 12px 14px; background: var(--surface);
+    border: 1px solid var(--border2); border-radius: var(--r); font-size: 15px; line-height: 1.5; color: var(--text);
+    transition: border-color .12s, background .12s;
+  }
+  .qz-opt:hover:not(:disabled) { border-color: var(--gold); background: var(--surface); }
+  .qz-opt-letter {
+    display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; padding: 0; margin-top: -1px;
+    border: 1px solid var(--border2); border-radius: var(--r);
+    font-family: var(--font-mono); font-weight: 500; font-size: 11.5px; color: var(--muted);
+  }
+  .qz-opt.correct { border-color: var(--ok); background: var(--know-bg); }
+  .qz-opt.correct .qz-opt-letter { border-color: var(--ok); color: var(--ok); }
+  .qz-opt.wrong { border-color: var(--bad); background: var(--review-bg); }
+  .qz-opt.wrong .qz-opt-letter { border-color: var(--bad); color: var(--bad); }
+  .qz-opt-mark { display: inline-flex; padding-top: 2px; }
+  .qz-opt.correct .qz-opt-mark { color: var(--ok); }
+  .qz-opt.wrong .qz-opt-mark { color: var(--bad); }
+  .qz-explain, .qz-card[class*="div-"] .qz-explain {
+    margin-top: 24px; padding: 20px 0 0; background: transparent; border-top: 1px solid var(--rule);
+    font-size: 15px; line-height: 1.7; color: var(--text);
+  }
+  .qz-explain strong, .sum-body strong { color: var(--strong); font-weight: 600; }
+  .qz-explain .qz-verdict { font-family: var(--font-mono); font-weight: 500; font-size: 11px; letter-spacing: .14em; margin-bottom: 8px; }
+
+  /* ---- TABLES ---- */
+  .table-section h3 {
+    font-size: 13px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--rule);
+  }
+  .tbl-wrap { border: 1px solid var(--border2); border-radius: var(--r); background: var(--surface); box-shadow: none; margin-bottom: 24px; }
+  table { font-size: 14px; }
+  th, .inline-table th {
+    background: var(--surface2); color: var(--text);
+    font-family: var(--font-sans); font-weight: 600; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase;
+    padding: 10px 14px; border-bottom: 1px solid var(--border2);
+  }
+  th[style*="color:var(--all3)"] { background: var(--surface2) !important; color: var(--all3) !important; }
+  th[style*="color:var(--both)"] { background: var(--surface2) !important; color: var(--both) !important; }
+  th[style*="color:var(--pa)"] { background: var(--surface2) !important; color: var(--pa) !important; }
+  th[style*="color:var(--ppd)"] { background: var(--surface2) !important; color: var(--ppd) !important; }
+  th[style*="color:var(--pdd)"] { background: var(--surface2) !important; color: var(--pdd) !important; }
+  th[style*="color:var(--pcm)"] { background: var(--surface2) !important; color: var(--pcm) !important; }
+  th[style*="color:var(--pjm)"] { background: var(--surface2) !important; color: var(--pjm) !important; }
+  th[style*="color:var(--ce)"] { background: var(--surface2) !important; color: var(--ce) !important; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--border); line-height: 1.55; }
+  tr:nth-child(even) td, .inline-table tr:nth-child(even) td { background: transparent; }
+  tr:hover td { background: var(--row-hover) !important; }
+  .priority-row td { background: var(--pri-bg); border-left: 0; }
+  .priority-row td:first-child { border-left: 2px solid var(--gold); }
+  .priority-row:hover td { background: var(--pri-hover) !important; }
+  .pill { border-radius: var(--r); font-family: var(--font-mono); font-weight: 500; font-size: 11px; letter-spacing: .06em; vertical-align: 1px; }
+  .pill .ico { width: 14px; height: 14px; vertical-align: -2px; }
+  .pill-yes { color: var(--ok); }
+  .pill-no { background: transparent; color: var(--muted); }
+  .pill-pri { background: transparent; border: 1px solid var(--gold); color: var(--gold-ink); padding: 1px 6px; }
+  .star { color: var(--gold-ink); }
+
+  /* ---- SUMMARY ---- */
+  .sum-toc { background: var(--surface); border: 1px solid var(--border2); border-radius: var(--r); box-shadow: none; padding: 16px 20px; margin-bottom: 32px; }
+  .sum-toc h4 { font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .14em; margin-bottom: 8px; }
+  .sum-toc ul { gap: 0; }
+  .sum-toc li + li { border-top: 1px solid var(--border); }
+  .sum-toc li a { font-size: 14px; padding: 7px 0; gap: 12px; }
+  .sum-toc li a:hover { color: var(--gold-ink); }
+  .toc-tag { font-size: 9.5px; padding: 2px 6px; min-width: 52px; text-align: center; }
+  .sum-section { margin-bottom: 48px; }
+  .sum-section-header { gap: 12px; margin-bottom: 24px; padding-bottom: 12px; border-bottom: 1px solid var(--rule) !important; }
+  .sum-section-header h3 { font-size: 21px; font-weight: 600; text-transform: none; letter-spacing: -.01em; line-height: 1.3; }
+  .sum-section-tag { font-size: 9.5px; }
+  .sum-subsection { margin-bottom: 24px; }
+  .sum-subsection h4 { font-size: 12px; font-weight: 600; letter-spacing: .1em; gap: 8px; margin-bottom: 8px; }
+  .sum-subsection h4::before { width: 12px; height: 1px; background: var(--gold); }
+  .sum-body { font-size: 15px; line-height: 1.7; }
+  .sum-body p { margin-bottom: 12px; }
+  .sum-body ul { gap: 6px; margin-bottom: 12px; }
+  .callout, .callout.warn, .callout.gold {
+    background: var(--inset); border: 1px solid var(--border); border-left: 2px solid var(--indigo);
+    border-radius: var(--r); box-shadow: none; padding: 12px 16px; margin: 16px 0; font-size: 14.5px; line-height: 1.65;
+  }
+  .callout.warn { border-left-color: var(--bad); }
+  .callout.gold { border-left-color: var(--gold); }
+  .inline-table { border: 1px solid var(--border2); box-shadow: none; font-size: 13.5px; margin: 8px 0 16px; }
+  .inline-table td { padding: 8px 10px; }
+  #sumSearch {
+    border: 1px solid var(--field) !important; border-radius: var(--r) !important; background: var(--surface) !important;
+    font-size: 15px !important; padding: 11px 40px 11px 14px !important;
+  }
+  #sumSearch:focus { border-color: var(--gold) !important; }
+  button[onclick^="clearSearch"] { display: inline-flex; padding: 4px !important; }
+
+  /* ---- TOOLS TAB (scripts add their own CSS later; these win by specificity) ---- */
+  body #tools { --tl-r: var(--r); }
+  body #tools [class*="tl-"], body #tools input, body #tools select, body #tools code { border-radius: var(--r) !important; }
+  body #tools .tl-h, body #tools h2.tl-top {
+    font-size: 26px; font-weight: 600; letter-spacing: -.01em; text-transform: none; color: var(--text);
+    line-height: 1.2; margin: 0 0 12px; padding-bottom: 16px; border-bottom: 1px solid var(--rule);
+  }
+  body #tools .tl-sec, body #tools .tl-flabel {
+    font-family: var(--font-mono); font-weight: 500; font-size: 10.5px; letter-spacing: .14em; color: var(--muted);
+  }
+  body #tools .tl-chip, body #tools .tl-segbtn, body #tools .tl-pill {
+    background: transparent; color: var(--text); border: 1px solid var(--border2);
+    font-weight: 500; font-size: 11px; letter-spacing: .08em; text-transform: uppercase; padding: 6px 12px;
+  }
+  body #tools .tl-chip:hover, body #tools .tl-segbtn:hover, body #tools .tl-pill:hover { background: var(--hover); border-color: var(--muted); color: var(--text); }
+  body #tools .tl-chip.on, body #tools .tl-chip.active, body #tools .tl-segbtn.on, body #tools .tl-pill:has(input:checked) {
+    background: var(--text); color: var(--bg); border-color: var(--text); font-weight: 500;
+  }
+  body #tools .tl-card { border: 1px solid var(--border2); box-shadow: none; }
+  body #tools .tl-card h3 { font-weight: 600; letter-spacing: -.005em; }
+  body #tools .tl-tag, body #tools .tl-badge {
+    background: color-mix(in srgb, var(--d, var(--muted)) 9%, transparent) !important; color: var(--d, var(--muted)) !important;
+    border: 1px solid color-mix(in srgb, var(--d, var(--muted)) 42%, transparent);
+    font-family: var(--font-mono); font-weight: 500; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 2px 7px;
+  }
+  body #tools .tl-btn, body #tools .tl-del { background: transparent; border: 1px solid var(--border2); color: var(--text); }
+  body #tools .tl-btn:hover { background: var(--hover); border-color: var(--text); }
+  body #tools .tl-res > div, body #tools .tl-r, body #tools .tl-phrow, body #tools .tl-row { border-color: var(--border); box-shadow: none; }
+  body #tools .tl-res dd, body #tools .tl-rv b { font-family: var(--font-mono); font-weight: 500; }
+  body #tools .tl-note { border-left-width: 2px; }
+  body #tools .tl-concept { color: var(--gold-ink); }
+  body #tools .tl-how summary { font-size: 11.5px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--text); }
+  body #tools .tl-src {
+    font-family: var(--font-mono); font-size: 11px; line-height: 1.55; letter-spacing: .04em; color: var(--muted);
+    border-top: 1px solid var(--border); padding-top: 8px; margin-top: 12px;
+  }
+  body #tools .tl-f input, body #tools .tl-fi, body #tools .tl-sel { border-color: var(--field); }
+  body #tools .tl-f input:focus, body #tools .tl-fi:focus-within, body #tools .tl-sel:focus { border-color: var(--gold); }
+  body #tools .tl-svg text { font-family: var(--font-sans); }
+
+  /* ---- LIBRARY TAB (if re-enabled) ---- */
+  #library { padding: 32px 24px 48px; max-width: 1080px; margin: 0 auto; }
+
+  /* ---- RESPONSIVE ---- */
+  @media (max-width: 760px) {
+    .nav { padding: 0 12px; }
+    .nav-brand { padding: 10px 12px 10px 0; margin-right: 4px; }
+    .nav-tab { padding: 14px 10px 12px; font-size: 11px; letter-spacing: .06em; gap: 6px; }
+    .nav-theme { width: 32px; height: 32px; }
+    #flashcards, #tables, #summary, #quiz, #tools, #library { padding: 20px 16px 40px; }
+    .fc-header h2, .qz-header h2, #tables h2, .sum-header h2, body #tools .tl-h, body #tools h2.tl-top { font-size: 22px; }
+    .card { min-height: 280px; }
+    .card-inner { padding: 64px 20px 24px; }
+    .card-q { font-size: 18px; min-height: 80px; }
+    .card-section-tag { padding: 0 16px; right: 120px; }
+    .qz-card, .qz-card[class*="div-"] { padding: 0 16px 20px; }
+    .qz-meta { margin: 0 -16px 20px; padding: 0 16px; }
+    .qz-q { font-size: 17px; }
+    .qz-opt { padding: 11px 12px; font-size: 14.5px; }
+    th, td { padding: 9px 10px; }
+    td { font-size: 13.5px; }
+    .sum-section-header h3 { font-size: 19px; }
+    .inline-table { display: block; overflow-x: auto; max-width: 100%; }
+    .inline-table th { white-space: normal; }
+  }
+  @media (max-width: 480px) {
+    .nav { flex-wrap: wrap; padding: 0 12px; }
+    .nav-brand { border-right: none; font-size: 11px; letter-spacing: .1em; padding: 10px 0 8px; flex: 1 1 auto; min-width: 0; }
+    .nav-right { order: 2; padding: 6px 0 4px; }
+    .nav-tabs { order: 3; flex: 1 1 100%; margin: 0 -12px; padding: 0 4px; border-top: 1px solid var(--border); }
+    .nav-tab .ico { display: none; }
+    .nav-tab { padding: 12px 8px 10px; font-size: 10.5px; letter-spacing: .05em; }
+    .fc-header h2, .qz-header h2, #tables h2, .sum-header h2, body #tools .tl-h, body #tools h2.tl-top { font-size: 20px; }
+    .fc-stat, .qz-stat { padding: 5px 8px; }
+    .fc-filter, .table-btn { padding: 5px 9px; font-size: 10.5px; letter-spacing: .06em; gap: 6px; }
+    .btn { padding: 8px 11px; font-size: 10.5px; gap: 6px; letter-spacing: .06em; }
+    .btn .ico, #qzNextBtn::after { width: 14px; height: 14px; }
+    .fc-counter { min-width: 52px; font-size: 11px; }
+    .fc-controls::after { content: ""; order: 1; flex-basis: 100%; height: 0; }
+    .fc-controls > .btn-review, .fc-controls > .btn-know { order: 2; flex: 1 1 0; }
+    .card-inner { padding: 60px 16px 20px; }
+    .card-q { font-size: 17px; }
+    .card-a, .card[class*="div-"] .card-a { font-size: 15px; padding-top: 16px; }
+    .sum-body, .sum-body ul { font-size: 14.5px; }
+    .inline-table { font-size: 12.5px; }
+    th, td { padding: 8px 8px; font-size: 12.5px; }
+    th { font-size: 10px; }
+  }
+</style>
 </head>
 <body>
 <nav class="nav">
@@ -629,19 +1129,19 @@
     </div>
   </div>
   <div class="nav-tabs" role="tablist" aria-label="Study sections">
-    <button class="nav-tab active" role="tab" aria-selected="true" aria-controls="flashcards" onclick="switchPanel('flashcards',this)">⚡ Flashcards</button>
-    <button class="nav-tab" role="tab" aria-selected="false" aria-controls="tables" onclick="switchPanel('tables',this)">📊 Tables</button>
-    <button class="nav-tab" role="tab" aria-selected="false" aria-controls="summary" onclick="switchPanel('summary',this)">📖 Summary</button>
-    <button class="nav-tab" role="tab" aria-selected="false" aria-controls="quiz" onclick="switchPanel('quiz',this)">📝 Practice Q</button>
+    <button class="nav-tab active" role="tab" aria-selected="true" aria-controls="flashcards" onclick="switchPanel('flashcards',this)"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2.5" y="4.5" width="9" height="9"/><path d="M5 2.5h8.5V11"/></svg>Flashcards</button>
+    <button class="nav-tab" role="tab" aria-selected="false" aria-controls="tables" onclick="switchPanel('tables',this)"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2" y="2.5" width="12" height="11"/><path d="M2 6h12M2 9.75h12M6.5 6v7.5"/></svg>Tables</button>
+    <button class="nav-tab" role="tab" aria-selected="false" aria-controls="summary" onclick="switchPanel('summary',this)"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3.5 1.75h6l3 3v9.5h-9z"/><path d="M9.5 1.75v3h3M5.75 8h4.5M5.75 10.5h4.5M5.75 13h2.5"/></svg>Summary</button>
+    <button class="nav-tab" role="tab" aria-selected="false" aria-controls="quiz" onclick="switchPanel('quiz',this)"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="2.25" y="2.25" width="11.5" height="11.5"/><path d="M5 8.2l2.1 2.1L11 6"/></svg>Practice Q</button>
   </div>
   <div class="nav-right">
     <button class="nav-profile" id="navProfile" onclick="openProfileModal()" title="Switch or manage study profiles" aria-label="Study profile">
       <span class="nav-profile-dot" id="navProfileDot">C</span>
       <span class="nav-profile-name" id="navProfileName">Default</span>
-      <span class="nav-profile-caret">▾</span>
+      <span class="nav-profile-caret"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4.5 6.25L8 9.75l3.5-3.5"/></svg></span>
     </button>
     <button class="nav-theme" id="navTheme" onclick="toggleTheme()" title="Toggle light / dark theme" aria-label="Toggle light or dark theme">
-      <span id="navThemeIcon">🌙</span>
+      <span id="navThemeIcon"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13.25 9.6A5.75 5.75 0 0 1 6.4 2.75a5.75 5.75 0 1 0 6.85 6.85z"/></svg></span>
     </button>
   </div>
 </nav>
@@ -650,7 +1150,7 @@
   <div class="modal">
     <div class="modal-head">
       <h3 id="pmTitle">Study Profiles</h3>
-      <button class="modal-x" onclick="closeProfileModal()" aria-label="Close">✕</button>
+      <button class="modal-x" onclick="closeProfileModal()" aria-label="Close"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
     </div>
     <p class="modal-sub">Each profile keeps its own flashcard, quiz, and filter progress on this computer. No account or internet needed. Up to 20 profiles.</p>
     <div class="profile-list" id="profileList"></div>
@@ -670,22 +1170,22 @@
       <div class="fc-stat stat-review">Review: <span id="reviewCount">0</span></div>
       <div class="fc-stat">Left: <span id="remCount">0</span></div>
     </div>
-    <button class="btn-ghost" onclick="resetDeck()">↺ Reset</button>
+    <button class="btn-ghost" onclick="resetDeck()"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13.25 8A5.25 5.25 0 1 1 11.7 4.3"/><path d="M12.25 1.5v3h-3"/></svg>Reset</button>
   </div>
   <div class="fc-filters">
     <div class="fc-filter active" onclick="setFilter('all',this)">All Cards</div>
-    <div class="fc-filter f-all3" onclick="setFilter('all3',this)">🔺 All 3 / Code</div>
-    <div class="fc-filter f-both" onclick="setFilter('both',this)">⭐ PPD + PDD</div>
+    <div class="fc-filter f-all3" onclick="setFilter('all3',this)">All 3 / Code</div>
+    <div class="fc-filter f-both" onclick="setFilter('both',this)">PPD + PDD</div>
     <div class="fc-filter f-pa" onclick="setFilter('pa',this)">PA Only</div>
     <div class="fc-filter f-ppd" onclick="setFilter('ppd',this)">PPD Only</div>
     <div class="fc-filter f-pdd" onclick="setFilter('pdd',this)">PDD Only</div>
-    <div class="fc-filter f-review" onclick="setFilter('review',this)">🔁 Needs Review</div>
+    <div class="fc-filter f-review" onclick="setFilter('review',this)">Needs Review</div>
   </div>
   <div class="fc-progress"><div class="fc-progress-bar" id="progressBar" style="width:0%"></div></div>
   <div id="cardArea">
     <div class="card" id="flashcard" onclick="flipCard()">
       <div class="card-section-tag" id="cardSection"></div>
-      <div class="card-division-badge badge-both" id="cardBadge">⭐ BOTH</div>
+      <div class="card-division-badge badge-both" id="cardBadge">BOTH</div>
       <div class="card-inner">
         <div class="card-q" id="cardQ">Loading...</div>
         <div class="card-a" id="cardA"></div>
@@ -694,11 +1194,11 @@
     </div>
   </div>
   <div class="fc-controls">
-    <button class="btn btn-review" id="btnReview" onclick="markCard('review')" disabled>✗ Review</button>
-    <button class="btn btn-outline" onclick="prevCard()">← Back</button>
+    <button class="btn btn-review" id="btnReview" onclick="markCard('review')" disabled><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8"/></svg>Review</button>
+    <button class="btn btn-outline" onclick="prevCard()"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 8H3M7 4L3 8l4 4"/></svg>Back</button>
     <div class="fc-counter" id="cardCounter">1 / 0</div>
-    <button class="btn btn-outline" onclick="nextCard()">Skip →</button>
-    <button class="btn btn-know" id="btnKnow" onclick="markCard('know')" disabled>✓ Got It</button>
+    <button class="btn btn-outline" onclick="nextCard()">Skip<svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8h10M9 4l4 4-4 4"/></svg></button>
+    <button class="btn btn-know" id="btnKnow" onclick="markCard('know')" disabled><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg>Got It</button>
   </div>
 </div>
 <!-- TABLES -->
@@ -706,7 +1206,7 @@
   <h2>Reference Tables</h2>
   <div class="table-nav">
     <div class="table-btn active" onclick="showTable('t-snapshot',this)">Division Snapshot</div>
-    <div class="table-btn" onclick="showTable('t-overlap',this)">⭐ Overlapping Topics</div>
+    <div class="table-btn" onclick="showTable('t-overlap',this)">Overlapping Topics</div>
     <div class="table-btn" onclick="showTable('t-occupancy',this)">Occupancy Groups</div>
     <div class="table-btn" onclick="showTable('t-construction',this)">Construction Types</div>
     <div class="table-btn" onclick="showTable('t-egress',this)">Egress Numbers</div>
@@ -1373,7 +1873,7 @@
     <p>The three technical divisions of the ARE 5.0, grounded in the Second Brain wiki. PPD and PDD share most systems content; PA front-loads site, zoning, and code analysis.</p>
     <div style="position:relative;margin-top:14px">
       <input id="sumSearch" type="text" oninput="filterSummary(this.value)" placeholder="Search the summary..." style="width:100%;padding:12px 36px 12px 14px;background:var(--inset);color:var(--text);outline:none;">
-      <button onclick="clearSearch()" title="Clear" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;line-height:1;">&times;</button>
+      <button onclick="clearSearch()" title="Clear" style="position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;line-height:1;"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8"/></svg></button>
     </div>
     <div id="sumSearchMsg" style="display:none;color:var(--muted);font-size:12px;margin-top:8px;"></div>
   </div>
@@ -1555,23 +2055,23 @@
       <div class="qz-stat stat-wrong">Wrong: <span id="qzWrong">0</span></div>
       <div class="qz-stat">Left: <span id="qzLeft">0</span></div>
     </div>
-    <button class="btn-ghost" onclick="resetQuiz()">↺ Reset</button>
+    <button class="btn-ghost" onclick="resetQuiz()"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13.25 8A5.25 5.25 0 1 1 11.7 4.3"/><path d="M12.25 1.5v3h-3"/></svg>Reset</button>
   </div>
   <div class="qz-filters">
     <div class="fc-filter active" onclick="setQzFilter('all',this)">All Questions</div>
-    <div class="fc-filter f-all3" onclick="setQzFilter('all3',this)">🔺 All 3 / Cross</div>
+    <div class="fc-filter f-all3" onclick="setQzFilter('all3',this)">All 3 / Cross</div>
     <div class="fc-filter f-pa" onclick="setQzFilter('pa',this)">PA</div>
     <div class="fc-filter f-ppd" onclick="setQzFilter('ppd',this)">PPD</div>
     <div class="fc-filter f-pdd" onclick="setQzFilter('pdd',this)">PDD</div>
-    <div class="fc-filter f-both" onclick="setQzFilter('both',this)">⭐ PPD + PDD</div>
-    <div class="fc-filter f-review" onclick="setQzFilter('wrong',this)">🔁 Missed</div>
+    <div class="fc-filter f-both" onclick="setQzFilter('both',this)">PPD + PDD</div>
+    <div class="fc-filter f-review" onclick="setQzFilter('wrong',this)">Missed</div>
   </div>
   <div class="qz-progress"><div class="qz-progress-bar" id="qzProgressBar" style="width:0%"></div></div>
   <div id="qzArea"></div>
   <div class="qz-controls" id="qzControls">
-    <button class="btn btn-outline" onclick="prevQuestion()">← Back</button>
+    <button class="btn btn-outline" onclick="prevQuestion()"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13 8H3M7 4L3 8l4 4"/></svg>Back</button>
     <div class="fc-counter" id="qzCounter">1 / 0</div>
-    <button class="btn btn-primary" id="qzNextBtn" onclick="nextQuestion()">Next →</button>
+    <button class="btn btn-primary" id="qzNextBtn" onclick="nextQuestion()">Next</button>
   </div>
 </div>
 <script>
@@ -2040,7 +2540,7 @@ function setFilter(f,el){
 function renderCard(){
   const area=document.getElementById('cardArea');
   if(deck.length===0){area.innerHTML='<div class="fc-complete"><h3>No cards in this filter.</h3><p>Try selecting a different category.</p></div>';document.getElementById('cardCounter').textContent='0 / 0';updateProgress();return;}
-  if(currentIndex>=deck.length){area.innerHTML=`<div class="fc-complete"><h3>🎉 Deck complete!</h3><p>You went through all ${deck.length} cards.</p><button class="btn btn-primary" onclick="buildDeck()">Restart</button></div>`;document.getElementById('cardCounter').textContent=`${deck.length} / ${deck.length}`;updateProgress();return;}
+  if(currentIndex>=deck.length){area.innerHTML=`<div class="fc-complete"><h3>Deck complete</h3><p>You went through all ${deck.length} cards.</p><button class="btn btn-primary" onclick="buildDeck()">Restart</button></div>`;document.getElementById('cardCounter').textContent=`${deck.length} / ${deck.length}`;updateProgress();return;}
   if(!document.getElementById('flashcard')){area.innerHTML='<div class="card" id="flashcard" onclick="flipCard()"><div class="card-section-tag" id="cardSection"></div><div class="card-division-badge badge-both" id="cardBadge"></div><div class="card-inner"><div class="card-q" id="cardQ"></div><div class="card-a" id="cardA"></div></div><div class="card-hint">Tap to reveal answer</div></div>';}
   const card=deck[currentIndex];
   document.getElementById('flashcard').classList.remove('flipped');
@@ -2378,19 +2878,19 @@ function renderQuestion(){
     let cls='qz-opt', mark='', dis='';
     if(prevAnswer!==undefined){
       dis='disabled';
-      if(i===item.correct){cls+=' correct';mark='<span class="qz-opt-mark">✓</span>';}
-      else if(i===answeredIdx){cls+=' wrong';mark='<span class="qz-opt-mark">✗</span>';}
+      if(i===item.correct){cls+=' correct';mark='<span class="qz-opt-mark" aria-label="correct answer"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 8.5l3.2 3.1L13 4.5"/></svg></span>';}
+      else if(i===answeredIdx){cls+=' wrong';mark='<span class="qz-opt-mark" aria-label="your answer"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M4 4l8 8M12 4l-8 8"/></svg></span>';}
     }
     html+=`<button class="${cls}" ${dis} onclick="answerQuestion(${i})"><span class="qz-opt-letter">${letters[i]}</span><span>${opt}</span>${mark}</button>`;
   });
   html+=`</div>`;
   const showExp=prevAnswer!==undefined?' show':'';
-  const verdict=prevAnswer==='correct'?'<span class="qz-verdict v-correct">✓ Correct</span>':(prevAnswer==='wrong'?'<span class="qz-verdict v-wrong">✗ Not quite</span>':'');
+  const verdict=prevAnswer==='correct'?'<span class="qz-verdict v-correct">Correct</span>':(prevAnswer==='wrong'?'<span class="qz-verdict v-wrong">Not quite</span>':'');
   html+=`<div class="qz-explain${showExp}" id="qzExplain">${verdict}${item.exp}${item.src?`<div class="qz-src">Source: ${item.src}</div>`:''}</div>`;
   html+=`</div>`;
   area.innerHTML=html;
   document.getElementById('qzCounter').textContent=`${qzIndex+1} / ${qzDeck.length}`;
-  document.getElementById('qzNextBtn').textContent=qzIndex===qzDeck.length-1?'Finish →':'Next →';
+  document.getElementById('qzNextBtn').textContent=qzIndex===qzDeck.length-1?'Finish':'Next';
   updateQzProgress();
 }
 function answerQuestion(i){
@@ -2493,7 +2993,7 @@ const MAX_PROFILES = 20;
 function applyTheme(t){
   document.documentElement.setAttribute('data-theme', t === 'light' ? 'light' : 'dark');
   const icon = document.getElementById('navThemeIcon');
-  if(icon) icon.textContent = (t === 'light') ? '☀️' : '🌙';
+  if(icon) icon.innerHTML = (t === 'light') ? '<svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="2.75"/><path d="M8 1.25v1.5M8 13.25v1.5M1.25 8h1.5M13.25 8h1.5M3.2 3.2l1.05 1.05M11.75 11.75l1.05 1.05M3.2 12.8l1.05-1.05M11.75 4.25l1.05-1.05"/></svg>' : '<svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M13.25 9.6A5.75 5.75 0 0 1 6.4 2.75a5.75 5.75 0 1 0 6.85 6.85z"/></svg>';
 }
 function toggleTheme(){
   const cur = LS.getItem(STORE.theme) === 'light' ? 'light' : 'dark';
@@ -2593,8 +3093,8 @@ function renderProfileList(){
       <span class="pr-name">${escapeHtml(p.name)}</span>
       ${isCur?'<span class="pr-current-tag">Active</span>':`<span class="pr-meta">${known} marked</span>`}
       <span class="pr-actions">
-        <button class="pr-btn" title="Rename" onclick="event.stopPropagation();renameProfile('${p.id}')">✎</button>
-        ${profs.length>1?`<button class="pr-btn pr-del" title="Delete" onclick="event.stopPropagation();deleteProfile('${p.id}')">🗑</button>`:''}
+        <button class="pr-btn" title="Rename" onclick="event.stopPropagation();renameProfile('${p.id}')"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M10.5 2.5l3 3-8 8h-3v-3z"/><path d="M9 4l3 3"/></svg></button>
+        ${profs.length>1?`<button class="pr-btn pr-del" title="Delete" onclick="event.stopPropagation();deleteProfile('${p.id}')"><svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 4.25h11M6 4.25V2.5h4v1.75M4 4.25l.7 9.25h6.6l.7-9.25M6.75 6.75v4.5M9.25 6.75v4.5"/></svg></button>`:''}
       </span>
     </div>`;
   }).join('');
@@ -3032,6 +3532,844 @@ document.addEventListener('keydown', e=>{
 
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
   else init();
+})();
+</script>
+<script id="tools-script">
+/* ===== TOOLS TAB (calculators + live diagrams) ===== */
+/* ===== TOOLS TAB (calculators + live diagrams) — Site 1: PA / PPD / PDD =====
+   Plain ES2017, no dependencies. Adds a "Tools" tab right after "Practice Q".
+   Only global touched: reads window.switchPanel. */
+(function () {
+  "use strict";
+  const PID = "tools";
+  if (document.getElementById(PID)) return;
+
+  const D2R = Math.PI / 180, R2D = 180 / Math.PI, EPS = 1e-9;
+  const nf = (n, d) => Number.isFinite(n) ? n.toLocaleString("en-US", { maximumFractionDigits: d == null ? 2 : d }) : "—";
+  const fx = (n, d) => Number.isFinite(n) ? n.toFixed(d) : "—";
+  const ftIn = (inch) => { const f = Math.floor(inch / 12 + 1e-9); const r = inch - f * 12; return f + "′ " + nf(r, 1) + "″"; };
+
+  /* ------------------------------ STYLES ------------------------------ */
+  function injectStyles() {
+    if (document.getElementById("tl-styles")) return;
+    const css = `
+#tools{padding:24px 20px 48px;max-width:1180px;margin:0 auto;color:var(--text)}
+#tools *{box-sizing:border-box}
+#tools .tl-h{font-size:28px;font-weight:900;letter-spacing:-.03em;text-transform:uppercase;color:var(--text);margin:0 0 6px}
+#tools .tl-intro{color:var(--muted);font-size:14px;line-height:1.5;margin:0 0 16px;max-width:72ch}
+#tools .tl-chips{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
+#tools .tl-flabel{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+#tools .tl-chip{background:var(--surface);color:var(--muted);border:1px solid var(--border);border-radius:20px;padding:5px 13px;font-size:13px;cursor:pointer;font-family:inherit}
+#tools .tl-chip:hover{color:var(--text);border-color:var(--gold)}
+#tools .tl-chip.active{background:var(--gold);color:#1a1208;border-color:var(--gold);font-weight:600}
+#tools .tl-sec{font-size:13px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:26px 0 12px;font-weight:600}
+#tools .tl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
+#tools .tl-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;min-width:0}
+#tools .tl-card[hidden]{display:none}
+#tools .tl-card.tl-wide{grid-column:1/-1}
+#tools .tl-top{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:4px}
+#tools .tl-top h3{font-size:17px;font-weight:800;margin:0;flex:1 1 200px;line-height:1.3;color:var(--text)}
+#tools .tl-badges{display:flex;gap:4px;flex-wrap:wrap}
+#tools .tl-badge{font-size:10.5px;font-weight:700;color:#fff;border-radius:5px;padding:2px 7px;letter-spacing:.04em}
+#tools .tl-why{font-size:13px;line-height:1.45;color:var(--muted);margin:0 0 12px}
+#tools .tl-split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:18px;align-items:start}
+#tools .tl-col{min-width:0}
+#tools .tl-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:12px}
+#tools .tl-f{display:flex;flex-direction:column;gap:4px;min-width:0}
+#tools .tl-f.full{grid-column:1/-1}
+#tools .tl-fl{font-size:12px;color:var(--muted);line-height:1.3}
+#tools .tl-fl b{color:var(--text)}
+#tools .tl-fi{display:flex;align-items:center;gap:6px;background:var(--inset);border:1px solid var(--border2);border-radius:8px;padding:0 10px}
+#tools .tl-fi:focus-within{border-color:var(--indigo)}
+#tools .tl-fi input{flex:1;min-width:0;width:100%;background:transparent;border:0;color:var(--text);font:inherit;font-size:15px;padding:9px 0;outline:none}
+#tools .tl-fi i{font-style:normal;color:var(--muted);font-size:12px;white-space:nowrap}
+#tools .tl-fi:has(input[aria-invalid="true"]){border-color:var(--bad)}
+#tools input[aria-invalid="true"]{color:var(--bad)}
+#tools .tl-sel{width:100%;min-width:0;background:var(--inset);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:9px 10px;font:inherit;font-size:14px}
+#tools .tl-sel:focus{outline:none;border-color:var(--indigo)}
+#tools .tl-chk{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.4;color:var(--text);grid-column:1/-1;cursor:pointer}
+#tools .tl-chk input{width:18px;height:18px;margin-top:1px;accent-color:var(--gold);flex:0 0 auto}
+#tools input[type=range]{width:100%;accent-color:var(--gold);margin:2px 0}
+#tools .tl-seg{display:flex;gap:6px;flex-wrap:wrap;grid-column:1/-1}
+#tools .tl-pill{display:inline-flex;align-items:center;gap:6px;background:var(--inset);border:1px solid var(--border2);border-radius:20px;padding:6px 12px;font-size:13px;cursor:pointer;color:var(--text)}
+#tools .tl-pill:has(input:checked){background:var(--gold);color:#1a1208;border-color:var(--gold);font-weight:600}
+#tools .tl-pill input{position:absolute;opacity:0;width:1px;height:1px}
+#tools .tl-pill:has(input:focus-visible){outline:2px solid var(--indigo);outline-offset:2px}
+#tools .tl-btn{background:var(--inset);color:var(--text);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;cursor:pointer}
+#tools .tl-btn:hover{border-color:var(--gold)}
+#tools .tl-res{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:6px}
+#tools .tl-r{background:var(--inset);border:1px solid var(--border);border-radius:8px;padding:8px 10px;min-width:0}
+#tools .tl-r.key{border-color:var(--gold)}
+#tools .tl-rl{display:block;font-size:11px;color:var(--muted);line-height:1.3;margin-bottom:2px}
+#tools .tl-rv{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
+#tools .tl-rv b{font-size:19px;color:var(--text);font-weight:800}
+#tools .tl-note{font-size:13px;line-height:1.45;padding:7px 10px;border-radius:8px;border-left:4px solid var(--border2);background:var(--inset);margin-top:6px;color:var(--text)}
+#tools .tl-note b{margin-right:6px}
+#tools .tl-note.ok{border-left-color:var(--ok)}
+#tools .tl-note.warn{border-left-color:var(--gold)}
+#tools .tl-note.bad{border-left-color:var(--bad)}
+#tools .tl-note.info{border-left-color:var(--indigo)}
+#tools .tl-how{margin-top:12px;border-top:1px solid var(--border);padding-top:8px;font-size:13px}
+#tools .tl-how summary{cursor:pointer;color:var(--muted);font-weight:600}
+#tools .tl-how p{margin:7px 0;line-height:1.5;color:var(--text)}
+#tools code{background:var(--inset);padding:1px 5px;border-radius:4px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;overflow-wrap:anywhere}
+#tools .tl-src{font-size:12px;color:var(--muted);margin:10px 0 0;line-height:1.45}
+#tools .tl-flags{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
+#tools .tl-flags td{padding:5px 6px;border-top:1px solid var(--border);vertical-align:top;line-height:1.35}
+#tools .tl-flags td:last-child{white-space:nowrap;text-align:right;font-weight:700}
+#tools .tl-flags .y{color:var(--ok)}
+#tools .tl-flags .n{color:var(--bad)}
+#tools .tl-svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto 8px;background:var(--inset);border:1px solid var(--border);border-radius:10px;color:var(--text)}
+#tools .tl-svg text{fill:var(--text);font:600 15px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+#tools .tl-svg text.m{fill:var(--muted);font-weight:500}
+#tools .tl-svg text.s{font-size:13px}
+@media(max-width:760px){
+#tools{padding:18px 16px 40px}
+#tools .tl-grid{grid-template-columns:minmax(0,1fr)}
+#tools .tl-split{grid-template-columns:minmax(0,1fr)}
+#tools .tl-h{font-size:24px}
+}`;
+    const st = document.createElement("style");
+    st.id = "tl-styles";
+    st.textContent = css;
+    document.head.appendChild(st);
+  }
+
+  /* ------------------------------ HELPERS ------------------------------ */
+  function fNum(name, label, unit, value, min, max, step) {
+    return `<label class="tl-f"><span class="tl-fl">${label}</span><span class="tl-fi"><input type="number" inputmode="decimal" data-in="${name}" value="${value}" min="${min}" max="${max}" step="${step || "any"}"><i>${unit || ""}</i></span></label>`;
+  }
+  function fRange(name, label, unit, value, min, max, step) {
+    return `<label class="tl-f full"><span class="tl-fl">${label}: <b data-v="${name}">${value}</b> ${unit}</span><input type="range" data-in="${name}" min="${min}" max="${max}" step="${step}" value="${value}"></label>`;
+  }
+  function res(label, name, unit, key) {
+    return `<div class="tl-r${key ? " key" : ""}"><span class="tl-rl">${label}</span><span class="tl-rv"><b data-out="${name}">—</b>${unit ? " " + unit : ""}</span></div>`;
+  }
+  const $in = (card, n) => card.querySelector('[data-in="' + n + '"]');
+  function out(card, n, t) { const e = card.querySelector('[data-out="' + n + '"]'); if (e) e.textContent = t; }
+  function html(card, n, h) { const e = card.querySelector('[data-out="' + n + '"]'); if (e) e.innerHTML = h; }
+  const ICON = { ok: "✓", warn: "!", bad: "✗", info: "i" };
+  function notes(card, list) {
+    html(card, "notes", list.map(n => `<div class="tl-note ${n[0]}"><b>${ICON[n[0]]}</b>${n[1]}</div>`).join(""));
+  }
+  /* Read + validate number inputs. spec: [name,label,min,max,{int,optional,minEx}] */
+  function rd(card, specs) {
+    const vals = {}, bad = [];
+    specs.forEach(s => {
+      const n = s[0], label = s[1], min = s[2], max = s[3], o = s[4] || {};
+      const el = $in(card, n);
+      const raw = el.value.trim();
+      let v;
+      if (raw === "") {
+        if (o.optional) { vals[n] = null; el.removeAttribute("aria-invalid"); return; }
+        v = NaN;
+      } else v = Number(raw);
+      let ok = Number.isFinite(v) && v >= min && v <= max && !(o.minEx && v <= min) && !(o.int && !Number.isInteger(v));
+      if (ok) el.removeAttribute("aria-invalid");
+      else {
+        el.setAttribute("aria-invalid", "true");
+        bad.push(label + ": enter " + (o.int ? "a whole number " : "a number ") + (o.minEx ? "above " + nf(min) + " and up to " + nf(max) : "from " + nf(min) + " to " + nf(max)) + ".");
+      }
+      vals[n] = v;
+    });
+    return { vals, bad };
+  }
+  function showBad(card, bad) {
+    card.querySelectorAll("[data-out]").forEach(e => { if (e.tagName === "B" || e.tagName === "SPAN") e.textContent = "—"; });
+    html(card, "notes", bad.map(t => `<div class="tl-note bad"><b>${ICON.bad}</b>${t}</div>`).join(""));
+    html(card, "how", "<p>Fix the highlighted input to see the steps.</p>");
+    const dg = card.querySelector("svg"); if (dg && card._badDiagram) dg.innerHTML = "";
+  }
+  function badge(div) {
+    const map = { PA: "--pa", PPD: "--ppd", PDD: "--pdd" };
+    if (div.length === 3) return `<span class="tl-badge" style="background:var(--all3)">ALL 3</span>`;
+    return div.map(d => `<span class="tl-badge" style="background:var(${map[d]})">${d}</span>`).join("");
+  }
+  function f2(n) { return nf(n, 2); }
+
+  /* ------------------------------ DATA ------------------------------ */
+  /* IBC 2021 Table 1004.5 — maximum floor area allowance per occupant (sf). */
+  const OCC = [
+    { l: "Business areas", f: 150, b: "gross" },
+    { l: "Assembly, unconcentrated (tables and chairs)", f: 15, b: "net", a: 1 },
+    { l: "Assembly, concentrated (chairs only, not fixed)", f: 7, b: "net", a: 1 },
+    { l: "Assembly, standing space", f: 5, b: "net", a: 1 },
+    { l: "Assembly, exhibit gallery and museum", f: 30, b: "net", a: 1 },
+    { l: "Educational, classroom area", f: 20, b: "net" },
+    { l: "Educational, shops and vocational rooms", f: 50, b: "net" },
+    { l: "Mercantile (sales floor)", f: 60, b: "gross" },
+    { l: "Mercantile storage, stock, shipping areas", f: 300, b: "gross" },
+    { l: "Residential", f: 200, b: "gross" },
+    { l: "Accessory storage, mechanical equipment room", f: 300, b: "gross" },
+    { l: "Kitchens, commercial", f: 200, b: "gross" },
+    { l: "Exercise rooms", f: 50, b: "gross" },
+    { l: "Industrial areas", f: 100, b: "gross" },
+    { l: "Library, reading rooms", f: 50, b: "net" },
+    { l: "Parking garages", f: 200, b: "gross" }
+  ];
+
+  /* ============================== TOOL 1: Occupant load + egress ============================== */
+  const T_OCC = {
+    id: "occ", title: "Occupant load and egress", div: ["PA", "PPD", "PDD"], wide: true, group: "calc",
+    why: "Exam use: turn a room area into a headcount, then size exits, egress width and exit spacing.",
+    body() {
+      return `<div class="tl-split"><div class="tl-col"><div class="tl-in">
+        <label class="tl-f full"><span class="tl-fl">Function of space (IBC Table 1004.5)</span><select class="tl-sel" data-in="space">${OCC.map((o, i) => `<option value="${i}">${o.l} — ${o.f} sf, ${o.b}</option>`).join("")}</select></label>
+        ${fNum("area", "Area of the space", "sf", 15000, 0, 10000000)}
+        ${fNum("diag", "Longest diagonal of the floor or area", "ft", 150, 0, 5000)}
+        <label class="tl-chk"><input type="checkbox" data-in="sprk"> Sprinklered throughout (NFPA 13 or 13R system, IBC 903.3.1.1 / 903.3.1.2)</label>
+        <label class="tl-chk"><input type="checkbox" data-in="evacs"> Emergency voice/alarm communication system (IBC 907.5.2.2)</label>
+        </div></div><div class="tl-col">
+        <div class="tl-res">${res("Occupant load (rounded up)", "load", "people", 1)}${res("Minimum exits", "exits", "", 1)}${res("Exit separation (min)", "sep", "ft", 1)}</div>
+        <div class="tl-res">${res("Stair width (calculated)", "stairw", "in")}${res("Stair width after 44 in. minimum", "stairgov", "in")}${res("Other egress width (doors, halls, ramps)", "othw", "in")}${res("Stair width each, load split evenly", "stairea", "in")}</div>
+        </div></div>
+        <div data-out="notes"></div>`;
+    },
+    init(card) {
+      card._upd = function () {
+        const { vals, bad } = rd(card, [["area", "Area", 0, 1e7, { minEx: true }], ["diag", "Diagonal", 0, 5000, { minEx: true }]]);
+        if (bad.length) return showBad(card, bad);
+        const row = OCC[Number($in(card, "space").value)];
+        const sprk = $in(card, "sprk").checked, ev = $in(card, "evacs").checked;
+        const load = Math.ceil(vals.area / row.f - EPS);
+        const exits = load > 1000 ? 4 : load > 500 ? 3 : 2;
+        const red = sprk && ev;
+        const fS = red ? 0.2 : 0.3, fO = red ? 0.15 : 0.2;
+        const sw = load * fS, ow = load * fO;
+        const stairMin = load < 50 ? 36 : 44;
+        const gov = Math.max(sw, stairMin);
+        const frac = sprk ? 1 / 3 : 1 / 2;
+        const sep = vals.diag * frac;
+        const each = Math.ceil(load / exits) * fS;
+        out(card, "load", nf(load, 0)); out(card, "exits", String(exits)); out(card, "sep", nf(sep, 1));
+        out(card, "stairw", nf(sw, 1)); out(card, "stairgov", nf(gov, 1)); out(card, "othw", nf(ow, 1));
+        out(card, "stairea", nf(Math.max(each, stairMin), 1));
+        const n = [];
+        n.push([exits > 2 ? "warn" : "ok", `A story with ${nf(load, 0)} occupants needs at least <b>${exits} exits</b>.`.replace("<b>", "").replace("</b>", "") ]);
+        if (load <= 49) n.push(["info", "Very small spaces may use one exit (IBC Table 1006.2.1, for example Group B up to 49 people with a short common path). This tool shows the story rule of 2."]);
+        if (row.a && load >= 50) n.push(["info", "An assembly room with 50 or more occupants is Group A (IBC 303.1.1); fewer than 50 is Group B."]);
+        if (row.a) n.push(["info", "Assembly with fixed seats is not in this list: count the seats instead (IBC 1004.6)."]);
+        if (sw < stairMin) n.push(["warn", `The calculated stair width (${nf(sw, 1)} in.) is below the stair minimum, so ${stairMin} in. governs (${stairMin === 36 ? "a stair serving fewer than 50 people may be 36 in." : "44 in. minimum"}).`]);
+        if (red) n.push(["ok", "Both sprinklers and the voice/alarm system are on, so the smaller width factors apply (0.2 in. stairs, 0.15 in. other)."]);
+        else if (sprk || ev) n.push(["warn", "The smaller width factors need BOTH sprinklers and the voice/alarm system. Only one is checked, so the full factors (0.3 and 0.2) are used."]);
+        n.push(["info", `Exit separation uses ${sprk ? "one-third (sprinklered)" : "one-half"} of the diagonal. Doors need at least 32 in. clear width.`]);
+        notes(card, n);
+        html(card, "how", `<p><b>1. Occupant load</b> = area ÷ load factor, rounded up. <code>${nf(vals.area, 0)} ÷ ${row.f} (${row.b}) = ${fx(vals.area / row.f, 2)} → ${nf(load, 0)}</code></p>
+          <p><b>2. Exits (story load):</b> 1–500 → 2, 501–1,000 → 3, over 1,000 → 4. <code>${nf(load, 0)} → ${exits}</code></p>
+          <p><b>3. Width</b> = occupants × factor. Stairs 0.3 in. per person, other components 0.2 in. With sprinklers AND a voice/alarm system: 0.2 and 0.15. <code>${nf(load, 0)} × ${fS} = ${nf(sw, 1)} in. (stairs)</code>, <code>${nf(load, 0)} × ${fO} = ${nf(ow, 1)} in. (other)</code></p>
+          <p><b>4. Exit separation</b> ≥ ½ of the longest diagonal, or ⅓ if sprinklered. <code>${nf(vals.diag, 0)} ft × ${sprk ? "⅓" : "½"} = ${nf(sep, 1)} ft</code></p>
+          <p>Net area = occupied floor only (no corridors, toilets, closets). Gross area = everything inside the exterior walls. A story's load is the sum of its spaces. Width is divided so losing one exit leaves at least 50% of the capacity (IBC 1005.5).</p>`);
+      };
+    },
+    how: true,
+    src: "IBC 2021 Table 1004.5 (load factors, checked against the 2021 table as adopted in WA WAC 51-54A-1004); §1005.3.1 and §1005.3.2 (width factors and the sprinkler + voice/alarm exception); §1006.2.1.1 and §1006.3 (number of exits); §1007.1.1 (exit separation, Exception 2 for sprinklers); §1011.2 (stair width). are_kb: building-codes-egress, occupancy-classification."
+  };
+
+  /* ============================== TOOL 2: Zoning envelope ============================== */
+  const T_ZONE = {
+    id: "zone", title: "Zoning envelope: FAR and coverage", div: ["PA"], group: "calc",
+    why: "Exam use: check a scheme against FAR (floor area ratio) and lot coverage, and see how many stories fit.",
+    body() {
+      return `<div class="tl-in">${fNum("site", "Site area", "sf", 20000, 0, 1e9)}${fNum("foot", "Building footprint", "sf", 6000, 0, 1e9)}${fNum("total", "Total floor area, all stories", "sf", 18000, 0, 1e9)}${fNum("farlim", "FAR limit", "ratio", 1, 0, 100, "0.01")}${fNum("covlim", "Coverage limit", "%", 40, 0, 100)}</div>
+        <div class="tl-res">${res("FAR (actual)", "far", "", 1)}${res("Building coverage ratio", "bcr", "%", 1)}${res("Max floor area allowed", "maxfa", "sf")}${res("Max footprint allowed", "maxfp", "sf")}${res("Stories at full coverage", "stories", "")}${res("Floor area left under FAR", "left", "sf")}</div>
+        <div data-out="notes"></div>`;
+    },
+    init(card) {
+      card._upd = function () {
+        const { vals: v, bad } = rd(card, [["site", "Site area", 0, 1e9, { minEx: true }], ["foot", "Footprint", 0, 1e9, { minEx: true }], ["total", "Total floor area", 0, 1e9, { minEx: true }], ["farlim", "FAR limit", 0, 100, { minEx: true }], ["covlim", "Coverage limit", 0, 100, { minEx: true }]]);
+        if (!bad.length && v.foot > v.site) bad.push("Footprint can't be larger than the site area.");
+        if (bad.length) return showBad(card, bad);
+        const far = v.total / v.site, bcr = v.foot / v.site * 100;
+        const maxfa = v.farlim * v.site, maxfp = v.covlim / 100 * v.site;
+        const st = maxfa / maxfp;
+        out(card, "far", fx(far, 2).replace(/\.?0+$/, "") || "0"); out(card, "bcr", nf(bcr, 1));
+        out(card, "maxfa", nf(maxfa, 0)); out(card, "maxfp", nf(maxfp, 0)); out(card, "stories", nf(st, 2)); out(card, "left", nf(maxfa - v.total, 0));
+        const n = [];
+        n.push([far <= v.farlim + EPS ? "ok" : "bad", far <= v.farlim + EPS ? `FAR ${fx(far, 2)} is within the limit of ${nf(v.farlim, 2)}.` : `FAR ${fx(far, 2)} is over the limit of ${nf(v.farlim, 2)}. Cut ${nf(v.total - maxfa, 0)} sf of floor area.`]);
+        n.push([bcr <= v.covlim + EPS ? "ok" : "bad", bcr <= v.covlim + EPS ? `Coverage ${nf(bcr, 1)}% is within the limit of ${nf(v.covlim, 1)}%.` : `Coverage ${nf(bcr, 1)}% is over the limit of ${nf(v.covlim, 1)}%. Cut ${nf(v.foot - maxfp, 0)} sf of footprint.`]);
+        if (v.total < v.foot) n.push(["warn", "Total floor area is smaller than the footprint. Total area should include every story, so check the numbers."]);
+        else n.push(["info", `Your scheme is about ${nf(v.total / v.foot, 2)} stories (total ÷ footprint).`]);
+        n.push(["info", st < 1 ? "The FAR limit is reached before the footprint limit fills one floor. FAR is the limit that binds." : `At full coverage the FAR limit allows about ${nf(st, 2)} stories, so ${st < 2 ? "FAR" : "FAR and the height limit"} controls the height.`]);
+        n.push(["info", "This tool does not test setbacks or the height limit. The most restrictive control governs."]);
+        notes(card, n);
+        html(card, "how", `<p><code>FAR = total floor area ÷ site area</code> and <code>BCR = footprint ÷ site area × 100</code>. The limits give a ceiling: <code>max floor area = FAR limit × site</code>, <code>max footprint = coverage limit × site</code>.</p>
+          <p>Now: <code>${nf(v.total, 0)} ÷ ${nf(v.site, 0)} = ${fx(far, 3)}</code>; <code>${nf(v.foot, 0)} ÷ ${nf(v.site, 0)} = ${nf(bcr, 1)}%</code>; <code>${nf(maxfa, 0)} ÷ ${nf(maxfp, 0)} = ${nf(st, 2)} stories</code>.</p>
+          <p>Many codes leave out parking, basements or mechanical space from floor area. On the exam, count all gross floor area unless the question says otherwise.</p>`);
+      };
+    },
+    src: "Ching §1.29 (zoning ordinances); are_kb: zoning-calculations, area-calculations (FAR = total floor area ÷ site area; BCR = footprint ÷ site area)."
+  };
+
+  /* ============================== TOOL 3: Cut and fill ============================== */
+  const T_EARTH = {
+    id: "earth", title: "Cut and fill: bank, loose, compacted", div: ["PA"], group: "calc",
+    why: "Exam use: convert soil between bank, loose (hauled) and compacted volumes, and count truckloads.",
+    body() {
+      return `<div class="tl-in">${fNum("bank", "Bank volume (cut in place)", "cy", 230, 0, 1e9)}${fNum("swell", "Swell, bank to loose", "%", 30, 0, 100)}${fNum("shrink", "Shrink, bank to compacted", "%", 10, -50, 50)}${fNum("truck", "Truck capacity (loose)", "cy", 12, 0, 1000)}${fNum("need", "Compacted fill needed (optional)", "cy", "", 0, 1e9)}</div>
+        <div class="tl-res">${res("Loose (hauled) volume", "loose", "cy", 1)}${res("Compacted volume", "comp", "cy", 1)}${res("Truckloads", "trucks", "loads", 1)}${res("Bank cut needed for that fill", "needbank", "cy")}</div>
+        <div data-out="notes"></div>`;
+    },
+    init(card) {
+      card._upd = function () {
+        const { vals: v, bad } = rd(card, [["bank", "Bank volume", 0, 1e9, { minEx: true }], ["swell", "Swell", 0, 100], ["shrink", "Shrink", -50, 50], ["truck", "Truck capacity", 0, 1000, { minEx: true }], ["need", "Fill needed", 0, 1e9, { optional: true }]]);
+        if (bad.length) return showBad(card, bad);
+        const loose = v.bank * (1 + v.swell / 100), comp = v.bank * (1 - v.shrink / 100);
+        const trucks = Math.ceil(loose / v.truck - EPS);
+        out(card, "loose", nf(loose, 1)); out(card, "comp", nf(comp, 1)); out(card, "trucks", nf(trucks, 0));
+        const n = [];
+        if (v.need != null && v.need > 0) {
+          const nb = v.need / (1 - v.shrink / 100);
+          out(card, "needbank", nf(nb, 1));
+          const diff = v.bank - nb;
+          n.push([Math.abs(diff) < 0.5 ? "ok" : "warn", Math.abs(diff) < 0.5 ? "Cut and fill are balanced." : diff > 0 ? `You have <b>${nf(diff, 1)} cy (bank)</b> of extra cut to haul away (waste).`.replace(/<\/?b>/g, "") : `You are <b>${nf(-diff, 1)} cy (bank)</b> short and must import borrow.`.replace(/<\/?b>/g, "")]);
+        } else out(card, "needbank", "—");
+        n.push(["info", "Swell and shrink are percentages of the BANK volume, not of the loose volume."]);
+        if (v.shrink < 0) n.push(["info", "Negative shrink means the compacted soil ends up larger than the bank volume (some rock does this)."]);
+        notes(card, n);
+        html(card, "how", `<p><code>loose = bank × (1 + swell)</code> and <code>compacted = bank × (1 − shrink)</code>. Truckloads = loose ÷ truck size, rounded up.</p>
+          <p>Now: <code>${nf(v.bank, 1)} × ${fx(1 + v.swell / 100, 2)} = ${nf(loose, 1)} cy</code>; <code>${nf(v.bank, 1)} × ${fx(1 - v.shrink / 100, 2)} = ${nf(comp, 1)} cy</code>; <code>${nf(loose, 1)} ÷ ${nf(v.truck, 1)} → ${nf(trucks, 0)} loads</code>.</p>
+          <p>To find the cut for a given fill: <code>bank needed = compacted fill ÷ (1 − shrink)</code>. 1 cy = 27 cf.</p>`);
+      };
+    },
+    src: "are_kb: site-grading-and-stormwater (Amber Book PA cards 35–37: bank, loose, compacted; 230 bank cy at 10% shrink = 207 compacted cy); Ching §1.12–1.14."
+  };
+
+  /* ============================== TOOL 4: Slope converter ============================== */
+  const T_SLOPE = {
+    id: "slope", title: "Slope converter and limits", div: ["PA", "PDD"], group: "calc",
+    why: "Exam use: switch between ratio, percent and degrees, and see which ADA and drainage limits the slope meets.",
+    body() {
+      return `<div class="tl-in">${fNum("ratio", "Ratio: run for 1 of rise (12 means 12:1)", ":1", 12, 0, 1e6)}${fNum("pct", "Percent", "%", "8.33", 0, 1000)}${fNum("deg", "Degrees", "°", "4.76", 0, 90)}</div>
+        <div class="tl-res">${res("Ratio, run : rise", "rr", "", 1)}${res("Ratio, rise : run", "rrr", "")}${res("Percent", "pctout", "%")}${res("Angle", "degout", "°")}</div>
+        <table class="tl-flags"><tbody data-out="flags"></tbody></table>
+        <div data-out="notes"></div>`;
+    },
+    init(card) {
+      card._upd = function (e) {
+        const ids = ["ratio", "pct", "deg"];
+        let src = e && e.target && e.target.dataset && e.target.dataset.in;
+        if (ids.indexOf(src) < 0) src = card._src || "ratio";
+        card._src = src;
+        const lim = { ratio: [0, 1e6, "Ratio"], pct: [0, 1000, "Percent"], deg: [0, 90, "Degrees"] }[src];
+        const el = $in(card, src), raw = el.value.trim(), x = raw === "" ? NaN : Number(raw);
+        if (!(Number.isFinite(x) && x > lim[0] && x < (src === "deg" ? 90 : lim[1] + 1) && x <= lim[1])) {
+          el.setAttribute("aria-invalid", "true");
+          return showBad(card, [lim[2] + ": enter a number above 0" + (src === "deg" ? " and below 90" : " and up to " + nf(lim[1])) + "."]);
+        }
+        ids.forEach(i => $in(card, i).removeAttribute("aria-invalid"));
+        const pct = src === "pct" ? x : src === "ratio" ? 100 / x : 100 * Math.tan(x * D2R);
+        const run = 100 / pct, deg = Math.atan(pct / 100) * R2D;
+        const trim = (n, d) => String(Number(n.toFixed(d)));
+        if (src !== "ratio") $in(card, "ratio").value = trim(run, 2);
+        if (src !== "pct") $in(card, "pct").value = trim(pct, 2);
+        if (src !== "deg") $in(card, "deg").value = trim(deg, 2);
+        out(card, "rr", nf(run, 2) + " : 1"); out(card, "rrr", "1 : " + nf(run, 2)); out(card, "pctout", nf(pct, 2)); out(card, "degout", nf(deg, 2));
+        const rows = [
+          ["ADA cross slope: 1:48 (2.08%) maximum", pct <= 100 / 48 + 1e-7],
+          ["ADA accessible route, running slope: 1:20 (5%) maximum", pct <= 5 + 1e-7],
+          ["ADA ramp, running slope: 1:12 (8.33%) maximum", pct <= 100 / 12 + 1e-7],
+          ["Paving drainage: 1% minimum", pct >= 1 - 1e-7],
+          ["Paved parking: 2% to 3%", pct >= 2 - 1e-7 && pct <= 3 + 1e-7],
+          ["Grass swale: 1.5% to 2%", pct >= 1.5 - 1e-7 && pct <= 2 + 1e-7],
+          ["Grass lawn: 1.5% to 10%", pct >= 1.5 - 1e-7 && pct <= 10 + 1e-7],
+          ["Finish grade at a building: 5% min on soil, 2% min over paving", pct >= 2 - 1e-7],
+          ["Easy to build on: 10% or less (over 25% erodes)", pct <= 10 + 1e-7]
+        ];
+        html(card, "flags", rows.map(r => `<tr><td>${r[0]}</td><td class="${r[1] ? "y" : "n"}">${r[1] ? "✓ Yes" : "✗ No"}</td></tr>`).join(""));
+        const n = [];
+        if (pct <= 100 / 48 + 1e-7) n.push(["ok", "At or below 1:48, so it is flat enough for a cross slope. Keep at least 1% so water drains."]);
+        if (pct > 5 + 1e-7 && pct <= 100 / 12 + 1e-7) n.push(["warn", "Steeper than 1:20 means it is a ramp. It then needs ramp rules: landings, handrails and edge protection."]);
+        else if (pct > 100 / 12 + 1e-7) n.push(["bad", "Steeper than 1:12. It is too steep for an accessible ramp."]);
+        if (pct >= 2 - 1e-7 && pct > 100 / 48 + 1e-7 && pct <= 5 + 1e-7) n.push(["info", "Over 1:48 as a cross slope is too steep for an accessible walk, though fine as a running slope up to 1:20."]);
+        notes(card, n);
+        html(card, "how", `<p>Slope = rise ÷ run. <code>percent = 100 ÷ (run per 1 rise)</code>, <code>degrees = arctan(percent ÷ 100)</code>, <code>percent = 100 × tan(degrees)</code>.</p>
+          <p>Now: <code>100 ÷ ${nf(run, 2)} = ${nf(pct, 2)}%</code>; <code>arctan(${nf(pct / 100, 4)}) = ${nf(deg, 2)}°</code>. A 1:12 slope is 8.33% and 4.76°.</p>
+          <p>Ratios are written rise:run for ramps (1:12) but landscape grades are often run:rise (4:1 = 25%). Steeper than 45° is over 100%.</p>`);
+      };
+    },
+    src: "2010 ADA Standards §403.3 (route 1:20 running, 1:48 cross), §405.2 (ramp 1:12), §405.3 (ramp cross slope 1:48); Ching §1.25 (drainage slopes), §1.38 (paving 1% minimum), §1.14 (ground slope); are_kb: site-grading-and-stormwater, accessibility-barrier-free-design."
+  };
+
+  /* ============================== TOOL 5: Stair checker ============================== */
+  const T_STAIR = {
+    id: "stair", title: "Stair checker", div: ["PDD"], group: "calc",
+    why: "Exam use: split a floor-to-floor rise into equal risers, then check riser, tread and comfort rules.",
+    body() {
+      return `<div class="tl-in">${fNum("rise", "Total rise (floor to floor)", "in", 120, 0, 400)}${fNum("maxr", "Target maximum riser", "in", 7, 0, 12)}${fNum("cnt", "Riser count (blank = automatic)", "", "", 1, 100, "1")}${fNum("tread", "Tread depth", "in", 11, 0, 30)}
+        <label class="tl-f full"><span class="tl-fl">Code</span><select class="tl-sel" data-in="code"><option value="ibc">IBC 2021 commercial: riser 4–7 in., tread 11 in. min</option><option value="irc">IRC 2021 residential: riser 7¾ in. max, tread 10 in. min</option></select></label></div>
+        <div class="tl-res">${res("Risers", "n", "", 1)}${res("Riser height", "r", "in", 1)}${res("Treads", "nt", "")}${res("Total run", "run", "in")}${res("Total run", "runft", "")}${res("2R + T", "c1", "in")}${res("R × T", "c2", "")}${res("Slope angle", "ang", "°")}</div>
+        <div data-out="notes"></div>`;
+    },
+    init(card) {
+      card._upd = function () {
+        const { vals: v, bad } = rd(card, [["rise", "Total rise", 0, 400, { minEx: true }], ["maxr", "Target riser", 0, 12, { minEx: true }], ["cnt", "Riser count", 1, 100, { optional: true, int: true }], ["tread", "Tread depth", 0, 30, { minEx: true }]]);
+        if (bad.length) return showBad(card, bad);
+        const irc = $in(card, "code").value === "irc";
+        const rMax = irc ? 7.75 : 7, rMin = irc ? 0 : 4, tMin = irc ? 10 : 11;
+        const n = v.cnt != null ? v.cnt : Math.ceil(v.rise / v.maxr - EPS);
+        const r = v.rise / n, nt = n - 1, run = nt * v.tread;
+        const c1 = 2 * r + v.tread, c2 = r * v.tread, ang = Math.atan2(r, v.tread) * R2D;
+        out(card, "n", String(n)); out(card, "r", fx(r, 2)); out(card, "nt", String(nt));
+        out(card, "run", nf(run, 1)); out(card, "runft", ftIn(run)); out(card, "c1", fx(c1, 2)); out(card, "c2", fx(c2, 1)); out(card, "ang", fx(ang, 1));
+        const nn = [], T = (ok, t, f) => nn.push([ok ? "ok" : "bad", ok ? t : f]);
+        T(r <= rMax + 1e-9, `Riser ${fx(r, 2)} in. is within the ${rMax} in. maximum.`, `Riser ${fx(r, 2)} in. is over the ${rMax} in. maximum. Add a riser.`);
+        if (rMin) T(r >= rMin - 1e-9, `Riser meets the ${rMin} in. minimum.`, `Riser is under the ${rMin} in. minimum. Use fewer risers.`);
+        T(v.tread >= tMin - 1e-9, `Tread ${nf(v.tread, 2)} in. meets the ${tMin} in. minimum.`, `Tread ${nf(v.tread, 2)} in. is under the ${tMin} in. minimum.`);
+        const cOk = c1 >= 24 - 1e-9 && c1 <= 25 + 1e-9;
+        nn.push([cOk ? "ok" : "warn", cOk ? `2R + T = ${fx(c1, 2)} in. is in Ching's comfort range of 24 to 25 in.` : `2R + T = ${fx(c1, 2)} in. is outside Ching's 24 to 25 in. A tread of ${fx(25 - 2 * r, 2)} in. would give 25. (Outdoor stairs aim for 26.)`]);
+        const pOk = c2 >= 72 - 1e-9 && c2 <= 75 + 1e-9;
+        nn.push([pOk ? "ok" : "info", `R × T = ${fx(c2, 1)}. The second Ching rule of thumb asks for 72 to 75.`]);
+        if (v.rise > 144) nn.push(["warn", "More than 12 ft of rise needs an intermediate landing (Ching §9.04 shows 12 ft maximum between landings)."]);
+        if (n < 3) nn.push(["warn", "A flight should have at least 3 risers (Ching §9.04)."]);
+        nn.push(["info", "Headroom: at least 80 in. (6 ft 8 in.) clear above the nosing line. Keep riser and tread variation within ³⁄₈ in."]);
+        notes(card, nn);
+        html(card, "how", `<p><b>Risers</b> = total rise ÷ target riser, rounded UP, then actual riser = total rise ÷ risers. <code>${nf(v.rise, 1)} ÷ ${v.maxr} = ${fx(v.rise / v.maxr, 2)} → ${v.cnt != null ? v.cnt + " (your count)" : n}</code>; <code>${nf(v.rise, 1)} ÷ ${n} = ${fx(r, 2)} in.</code></p>
+          <p>A flight has one fewer tread than risers: <code>${n} − 1 = ${nt}</code>; total run = treads × tread depth = <code>${nt} × ${nf(v.tread, 2)} = ${nf(run, 1)} in.</code></p>
+          <p>Comfort: <code>2R + T = 24 to 25 in.</code> (or <code>R × T = 72 to 75</code>). Now: <code>2 × ${fx(r, 2)} + ${nf(v.tread, 2)} = ${fx(c1, 2)}</code>.</p>`);
+      };
+    },
+    src: "IBC 2021 §1011.5.2 (riser 4–7 in., tread 11 in. min), §1011.3 (80 in. headroom), §1011.2 (stair width); IRC 2021 R311.7.5.1 and R311.7.5.2 (7¾ in. riser, 10 in. tread), R311.7.2 (6 ft 8 in. headroom); Ching §9.03 (comfort formulas, procedure), §9.04–9.05 (limits)."
+  };
+
+  /* ============================== TOOL 6: Net-to-gross ============================== */
+  const T_EFF = {
+    id: "eff", title: "Net-to-gross efficiency", div: ["PA"], group: "calc",
+    why: "Exam use: grow a net program area to a gross building area, or find the efficiency of a scheme.",
+    body() {
+      return `<div class="tl-in"><label class="tl-f full"><span class="tl-fl">What do you know?</span><select class="tl-sel" data-in="mode"><option value="ne">Net area and efficiency → gross</option><option value="ge">Gross area and efficiency → net</option><option value="gn">Gross and net → efficiency</option></select></label>
+        <span data-show="net" style="display:contents">${fNum("net", "Net program area", "sf", 6500, 0, 1e9)}</span>
+        <span data-show="gross" style="display:contents">${fNum("gross", "Gross building area", "sf", 10000, 0, 1e9)}</span>
+        <span data-show="eff" style="display:contents">${fNum("eff", "Efficiency (net ÷ gross)", "%", 65, 0, 100)}</span></div>
+        <div class="tl-res">${res("Gross area", "g", "sf", 1)}${res("Net area", "n", "sf", 1)}${res("Efficiency", "e", "%", 1)}${res("Grossing factor", "gf", "")}${res("Non-net area", "nn", "sf")}</div>
+        <div data-out="notes"></div>`;
+    },
+    init(card) {
+      card._upd = function () {
+        const mode = $in(card, "mode").value;
+        const show = { ne: ["net", "eff"], ge: ["gross", "eff"], gn: ["gross", "net"] }[mode];
+        ["net", "gross", "eff"].forEach(k => { card.querySelector('[data-show="' + k + '"]').style.display = show.indexOf(k) >= 0 ? "contents" : "none"; });
+        const sp = { net: ["net", "Net area", 0, 1e9, { minEx: true }], gross: ["gross", "Gross area", 0, 1e9, { minEx: true }], eff: ["eff", "Efficiency", 0, 100, { minEx: true }] };
+        ["net", "gross", "eff"].forEach(k => { if (show.indexOf(k) < 0) $in(card, k).removeAttribute("aria-invalid"); });
+        const { vals: v, bad } = rd(card, show.map(k => sp[k]));
+        if (!bad.length && mode === "gn" && v.net > v.gross) { $in(card, "net").setAttribute("aria-invalid", "true"); bad.push("Net area can't be larger than gross area."); }
+        if (bad.length) return showBad(card, bad);
+        let g, ne, e;
+        if (mode === "ne") { ne = v.net; e = v.eff; g = ne / (e / 100); }
+        else if (mode === "ge") { g = v.gross; e = v.eff; ne = g * e / 100; }
+        else { g = v.gross; ne = v.net; e = ne / g * 100; }
+        out(card, "g", nf(g, 1)); out(card, "n", nf(ne, 1)); out(card, "e", nf(e, 2)); out(card, "gf", fx(g / ne, 3)); out(card, "nn", nf(g - ne, 1));
+        const n = [];
+        n.push(["info", `The efficiency ratio is always 1.0 or less; the grossing factor is always 1.0 or more. Here: ${fx(e / 100, 3)} and ${fx(g / ne, 3)}.`]);
+        n.push([e >= 80 ? "ok" : e >= 60 ? "info" : "warn", e >= 80 ? "High efficiency, like a warehouse (about 0.95) or a lean leasable office (about 80%)." : e >= 60 ? "Typical range. A university classroom building is about 0.65 in the wiki example." : "Low efficiency. Lots of circulation, structure or mechanical space; check that the scheme is not wasteful."]);
+        notes(card, n);
+        html(card, "how", `<p><code>efficiency = net ÷ gross</code>, so <code>gross = net ÷ efficiency</code> and <code>net = gross × efficiency</code>. The grossing factor is <code>gross ÷ net</code>.</p>
+          <p>Now: <code>${nf(ne, 1)} ÷ ${fx(e / 100, 3)} = ${nf(g, 1)} sf</code>. Non-net space (circulation, core, structure, mechanical) = <code>${nf(g, 1)} − ${nf(ne, 1)} = ${nf(g - ne, 1)} sf</code>.</p>
+          <p>Go RUN: Gross, Rentable, Usable, Net, from most to least inclusive.</p>`);
+      };
+    },
+    src: "are_kb: area-calculations (net-to-gross ratio, grossing factor, “Go RUN”; warehouse 0.95 and classroom building 0.65 examples; Amber Book PA card 26 efficiency 80,000 ÷ 100,000 = 80%)."
+  };
+
+  /* ============================== TOOL 7: Sun angle + overhang ============================== */
+  const MONTH_N = [21, 52, 80, 111, 141, 172, 202, 233, 264, 294, 325, 355];
+  const MONTHS = ["Jan 21", "Feb 21", "Mar 21", "Apr 21", "May 21", "Jun 21", "Jul 21", "Aug 21", "Sep 21", "Oct 21", "Nov 21", "Dec 21"];
+  function decl(key) {
+    if (key === "sum") return 23.45;
+    if (key === "eq") return 0;
+    if (key === "win") return -23.45;
+    const n = MONTH_N[Number(key.slice(1))];
+    return 23.45 * Math.sin(2 * Math.PI * (284 + n) / 365);
+  }
+  const noonAlt = (lat, dec) => 90 - Math.abs(lat - dec);
+
+  function sunSvg(p) {
+    const W = 480, gy = 300, wx = 300, wt = 18, right = 466;
+    const wallH = p.sill + p.H + 1.5, s = Math.min(26, 230 / wallH);
+    const yh = gy - (p.sill + p.H) * s, ys = gy - p.sill * s, yt = gy - wallH * s;
+    const Ds = p.D > 0 ? p.D * s : 0, xE = wx - Ds;
+    let g = `<rect x="0" y="${gy}" width="${W}" height="40" style="fill:var(--surface2)"/>
+      <rect x="${wx + wt}" y="${yt}" width="${right - wx - wt}" height="${gy - yt}" style="fill:var(--surface)"/>
+      <rect x="${wx}" y="${yt}" width="${wt}" height="${gy - yt}" style="fill:var(--border2)"/>
+      <rect x="${wx}" y="${yh}" width="${wt}" height="${ys - yh}" style="fill:var(--ppd);opacity:.45"/>`;
+    const ray = (x0, y0, x1, y1, st) => `<line x1="${fx(x0, 1)}" y1="${fx(y0, 1)}" x2="${fx(x1, 1)}" y2="${fx(y1, 1)}" style="${st}"/>`;
+    const gold = "stroke:var(--gold);stroke-width:2.5", ghost = "stroke:var(--muted);stroke-width:2;stroke-dasharray:6 5";
+    const back = (xe, ye, a) => { const c = Math.cos(a * D2R), sn = Math.sin(a * D2R); const t = Math.min((ye - 14) / sn, (xe - 14) / c); return [xe - t * c, ye - t * sn]; };
+    const a = p.altD * D2R, ca = Math.cos(a), sa = Math.sin(a);
+    let sunPt = null;
+    if (!p.northD) {
+      // shaded and sunlit parts of the glass
+      const sh = Math.min(p.shadow, p.H) * s;
+      g += `<rect x="${wx}" y="${yh}" width="${wt}" height="${sh}" style="fill:var(--text);opacity:.7"/>`;
+      if (p.shadow < p.H) g += `<rect x="${wx}" y="${yh + sh}" width="${wt}" height="${ys - yh - sh}" style="fill:var(--gold);opacity:.95"/>`;
+      // critical ray (grazes overhang edge)
+      const yc = yh + Ds * Math.tan(a);
+      const b = back(xE, yh, p.altD); sunPt = b;
+      g += ray(b[0], b[1], wx, Math.min(yc, gy), gold);
+      // ray blocked by overhang top
+      if (Ds > 4) { const xb = xE + Ds * 0.55, yb = yh - 7; const bb = back(xb, yb, p.altD); g += ray(bb[0], bb[1], xb, yb, gold + ";opacity:.45"); }
+      // sunlit ray through glass
+      if (p.shadow < p.H) {
+        const ym = yh + sh + (ys - yh - sh) / 2, bs = back(wx, ym, p.altD);
+        const t = Math.min((right - wx) / ca, (gy - ym) / sa);
+        g += ray(bs[0], bs[1], wx + t * ca, ym + t * sa, gold);
+      }
+    } else {
+      const sx = 430, sy = 28, t = (yt - sy) / sa; sunPt = [sx, sy];
+      g += ray(sx, sy, sx - t * ca, yt, gold + ";opacity:.8");
+    }
+    // summer design ray
+    if (p.D > 0 && p.keyD !== "sum") { const b = back(xE, yh, p.altS); g += ray(b[0], b[1], wx, ys, ghost); }
+    // overhang
+    if (Ds > 0) g += `<rect x="${xE}" y="${yh - 7}" width="${Ds + wt}" height="7" style="fill:var(--gold);stroke:var(--text);stroke-width:1"/>`;
+    // outline + floor
+    g += `<line x1="${wx + wt}" y1="${gy}" x2="${right}" y2="${gy}" style="stroke:var(--text);stroke-width:3"/><line x1="0" y1="${gy}" x2="${wx}" y2="${gy}" style="stroke:var(--text);stroke-width:2"/>
+      <line x1="${wx}" y1="${yt}" x2="${right}" y2="${yt}" style="stroke:var(--text);stroke-width:3"/>
+      <rect x="${wx}" y="${yt}" width="${wt}" height="${gy - yt}" style="fill:none;stroke:var(--text);stroke-width:1.5"/>`;
+    // H dimension
+    const hx = wx + wt + 16;
+    g += `<line x1="${hx}" y1="${yh}" x2="${hx}" y2="${ys}" style="stroke:var(--text);stroke-width:1.5"/><line x1="${hx - 5}" y1="${yh}" x2="${hx + 5}" y2="${yh}" style="stroke:var(--text);stroke-width:1.5"/><line x1="${hx - 5}" y1="${ys}" x2="${hx + 5}" y2="${ys}" style="stroke:var(--text);stroke-width:1.5"/>
+      <text x="${hx + 9}" y="${(yh + ys) / 2 + 5}">H</text>`;
+    if (Ds > 0) g += `<line x1="${xE}" y1="${yh - 20}" x2="${wx}" y2="${yh - 20}" style="stroke:var(--text);stroke-width:1.5"/><line x1="${xE}" y1="${yh - 25}" x2="${xE}" y2="${yh - 15}" style="stroke:var(--text);stroke-width:1.5"/><line x1="${wx}" y1="${yh - 25}" x2="${wx}" y2="${yh - 15}" style="stroke:var(--text);stroke-width:1.5"/>
+      <text x="${(xE + wx) / 2 - 5}" y="${yh - 26}">D</text>`;
+    if (sunPt) g += `<circle cx="${fx(sunPt[0], 1)}" cy="${fx(sunPt[1], 1)}" r="9" style="fill:var(--gold);stroke:var(--text);stroke-width:1.5"/>`;
+    g += `<text x="472" y="22" text-anchor="end">Chosen date α = ${fx(p.altD, 1)}°</text><text class="m" x="472" y="42" text-anchor="end">Summer noon α = ${fx(p.altS, 1)}°</text>`;
+    g += `<text class="m s" x="10" y="326">South (sun side)</text><text class="m s" x="${right}" y="326" text-anchor="end">Inside</text>`;
+    if (p.northD) g += `<text class="m s" x="10" y="${gy - 10}">Sun is north of the wall: no direct sun</text>`;
+    return g;
+  }
+
+  const T_SUN = {
+    id: "sun", title: "Sun angle and overhang depth", div: ["PA", "PPD"], wide: true, diagram: true, group: "diagram",
+    why: "Exam use: size a south overhang that shades a window in summer and lets the low winter sun in.",
+    body() {
+      return `<div class="tl-split"><div class="tl-col"><div class="tl-in">
+        ${fRange("lat", "Latitude", "°N", 40, 0, 60, 1)}
+        <label class="tl-f full"><span class="tl-fl">Date for the sun rays (solar noon)</span><select class="tl-sel" data-in="date"><option value="sum">Summer solstice (Jun 21)</option><option value="eq">Equinox (Mar 21 / Sep 21)</option><option value="win">Winter solstice (Dec 21)</option>${MONTHS.map((m, i) => `<option value="m${i}">${m}</option>`).join("")}</select></label>
+        ${fRange("H", "Window height H", "ft", 5, 1, 10, 0.5)}${fRange("sill", "Sill height above floor", "ft", 3, 0, 6, 0.5)}</div>
+        <div class="tl-res">${res("Overhang depth D", "D", "ft", 1)}${res("Summer noon altitude", "altS", "°", 1)}${res("Equinox noon altitude", "altE", "°")}${res("Winter noon altitude", "altW", "°")}${res("Altitude, chosen date", "altD", "°")}${res("Shadow down the window", "shadow", "ft")}${res("Window shaded", "pct", "%")}</div></div>
+        <div class="tl-col"><svg class="tl-svg" viewBox="0 0 480 340" role="img" aria-label="Section through a south wall with a window and overhang, showing sun rays"></svg></div></div>
+        <div data-out="notes"></div>`;
+    },
+    init(card) {
+      const svg = card.querySelector("svg");
+      card._upd = function () {
+        const lat = Number($in(card, "lat").value), H = Number($in(card, "H").value), sill = Number($in(card, "sill").value), key = $in(card, "date").value;
+        card.querySelectorAll("[data-v]").forEach(b => { b.textContent = $in(card, b.dataset.v).value; });
+        const altS = noonAlt(lat, 23.45), altE = noonAlt(lat, 0), altW = noonAlt(lat, -23.45);
+        const dd = decl(key), altD = noonAlt(lat, dd);
+        const northS = lat < 23.45 - EPS, northD = lat < dd - EPS;
+        const D = northS ? 0 : H / Math.tan(altS * D2R);
+        const shadow = northD ? 0 : D * Math.tan(altD * D2R);
+        const pct = northD ? 100 : Math.min(100, shadow / H * 100);
+        out(card, "D", northS ? "—" : fx(D, 2)); out(card, "altS", fx(altS, 2)); out(card, "altE", fx(altE, 2)); out(card, "altW", fx(altW, 2));
+        out(card, "altD", fx(altD, 2)); out(card, "shadow", northD ? "—" : fx(Math.min(shadow, H), 2)); out(card, "pct", northD ? "100 (wall in shade)" : fx(pct, 0));
+        svg.innerHTML = sunSvg({ lat, H, sill, D, altS, altD, northD, shadow, keyD: key });
+        const n = [];
+        if (northS) n.push(["warn", "At this latitude the summer noon sun is north of overhead. A south overhang can't block it. Shade east, west and north openings instead."]);
+        else {
+          n.push(["ok", `Overhang depth D = ${fx(D, 2)} ft shades the whole ${nf(H, 1)} ft window at the summer solstice.`]);
+          if (!northD) n.push([pct >= 99.5 ? "info" : "info", `On the chosen date the shadow reaches ${fx(Math.min(shadow, H), 2)} ft down the window (${fx(pct, 0)}% shaded). ${pct < 99.5 ? "The rest of the glass gets direct sun." : ""}`]);
+        }
+        if (altW < 15 && !northS) n.push(["info", "The winter sun is very low here, so even a deep overhang lets it reach the glass."]);
+        notes(card, n);
+        html(card, "how", `<p>Noon altitude = 90° − latitude + declination. Declination is +23.45° at the summer solstice, 0° at the equinox, −23.45° at the winter solstice. (If latitude is below the declination, the sun is north of overhead and the formula uses 90 − |lat − dec|.)</p>
+          <p>Right triangle: the overhang edge, the window sill and the ray. To shade the full window at the summer solstice, <code>D = H ÷ tan(summer altitude)</code>.</p>
+          <p>Now: <code>summer altitude = 90 − ${lat} + 23.45 = ${fx(altS, 2)}°</code>${northS ? "" : `; <code>D = ${nf(H, 1)} ÷ tan(${fx(altS, 2)}°) = ${fx(D, 2)} ft</code>; shadow on the chosen date = <code>D × tan(${fx(altD, 2)}°) = ${fx(shadow, 2)} ft</code>`}.</p>
+          <p>Gold slab = overhang. Black part of the glass = shaded. Gold part = sunlit. Dashed line = the summer ray, which just reaches the sill.</p>`);
+      };
+    },
+    src: "Ching §1.18 (altitude, solar path, noon altitudes by latitude), §1.22 (overhangs work best on south faces); are_kb: sun-path-and-solar-geometry. Declination ±23.45° is the standard astronomical value; D = H ÷ tan(altitude) is plain trigonometry, not printed in the wiki. Month values use the 21st and an approximate declination formula."
+  };
+
+  /* ============================== TOOL 8: PV tilt ============================== */
+  function arcPath(cx, cy, r, a0, a1) {
+    let da = a1 - a0; while (da > Math.PI) da -= 2 * Math.PI; while (da <= -Math.PI) da += 2 * Math.PI;
+    return `M${fx(cx + r * Math.cos(a0), 1)} ${fx(cy + r * Math.sin(a0), 1)} A${r} ${r} 0 0 ${da > 0 ? 1 : 0} ${fx(cx + r * Math.cos(a1), 1)} ${fx(cy + r * Math.sin(a1), 1)}`;
+  }
+  const T_PV = {
+    id: "pv", title: "Solar panel tilt", div: ["PPD"], wide: true, diagram: true, group: "diagram",
+    why: "Exam use: pick a fixed panel tilt from latitude and season, and see how far the noon sun is from square-on.",
+    body() {
+      return `<div class="tl-split"><div class="tl-col"><div class="tl-in">
+        ${fRange("lat", "Latitude", "°N", 34, 0, 60, 1)}
+        <div class="tl-seg" role="radiogroup" aria-label="Season"><label class="tl-pill"><input type="radio" name="pvseason" value="year" checked> Year-round</label><label class="tl-pill"><input type="radio" name="pvseason" value="summer"> Summer</label><label class="tl-pill"><input type="radio" name="pvseason" value="winter"> Winter</label></div></div>
+        <div class="tl-res">${res("Recommended tilt", "tilt", "° from horizontal", 1)}${res("Noon sun altitude", "alt", "°", 1)}${res("Angle of incidence", "aoi", "°", 1)}${res("Output vs square-on", "eff", "%")}${res("Angle B (to panel normal)", "bang", "°")}</div></div>
+        <div class="tl-col"><svg class="tl-svg" viewBox="0 0 480 300" role="img" aria-label="Section view of a south-facing solar panel with the noon sun ray"></svg></div></div>
+        <div data-out="notes"></div>`;
+    },
+    init(card) {
+      const svg = card.querySelector("svg");
+      card._upd = function () {
+        const lat = Number($in(card, "lat").value);
+        const season = card.querySelector('input[name="pvseason"]:checked').value;
+        card.querySelectorAll("[data-v]").forEach(b => { b.textContent = $in(card, b.dataset.v).value; });
+        const rawTilt = season === "summer" ? lat - 15 : season === "winter" ? lat + 15 : lat;
+        const tilt = Math.max(0, Math.min(90, rawTilt));
+        const dec = season === "summer" ? 23.45 : season === "winter" ? -23.45 : 0;
+        const alt = noonAlt(lat, dec), north = lat < dec - EPS;
+        const b = tilt * D2R, a = alt * D2R;
+        const cosI = Math.sin(b) * Math.cos(a) * (north ? -1 : 1) + Math.cos(b) * Math.sin(a);
+        const aoi = Math.acos(Math.max(-1, Math.min(1, cosI))) * R2D;
+        out(card, "tilt", fx(tilt, 1).replace(/\.0$/, "")); out(card, "alt", fx(alt, 2)); out(card, "aoi", fx(aoi, 2)); out(card, "eff", cosI > 0 ? fx(cosI * 100, 1) : "0"); out(card, "bang", fx(90 - tilt, 1).replace(/\.0$/, ""));
+        // drawing
+        const gy = 262, x0 = 190, y0 = 256, L = 170;
+        const P1 = [x0 + L * Math.cos(b), y0 - L * Math.sin(b)], C = [x0 + L / 2 * Math.cos(b), y0 - L / 2 * Math.sin(b)];
+        const u = north ? [Math.cos(a), -Math.sin(a)] : [-Math.cos(a), -Math.sin(a)];
+        let t = 230; if (Math.abs(Math.cos(a)) > 1e-6) t = Math.min(t, north ? (466 - C[0]) / Math.cos(a) : (C[0] - 14) / Math.cos(a)); t = Math.min(t, (C[1] - 14) / Math.sin(a));
+        const S = [C[0] + t * u[0], C[1] + t * u[1]];
+        const nrm = [-Math.sin(b), -Math.cos(b)], nl = 80;
+        const aU = Math.atan2(u[1], u[0]), aN = Math.atan2(nrm[1], nrm[0]);
+        let g = `<rect x="0" y="${gy}" width="480" height="38" style="fill:var(--surface2)"/><line x1="0" y1="${gy}" x2="480" y2="${gy}" style="stroke:var(--text);stroke-width:2"/>
+          <line x1="${fx(P1[0], 1)}" y1="${fx(P1[1], 1)}" x2="${fx(P1[0], 1)}" y2="${gy}" style="stroke:var(--muted);stroke-width:2;stroke-dasharray:4 4"/>
+          <line x1="${x0}" y1="${y0}" x2="${fx(P1[0], 1)}" y2="${fx(P1[1], 1)}" style="stroke:var(--indigo);stroke-width:9;stroke-linecap:round"/>
+          <line x1="${fx(C[0], 1)}" y1="${fx(C[1], 1)}" x2="${fx(C[0] + nl * nrm[0], 1)}" y2="${fx(C[1] + nl * nrm[1], 1)}" style="stroke:var(--text);stroke-width:2;stroke-dasharray:5 4"/>
+          <line x1="${fx(S[0], 1)}" y1="${fx(S[1], 1)}" x2="${fx(C[0], 1)}" y2="${fx(C[1], 1)}" style="stroke:var(--gold);stroke-width:3"/>
+          <circle cx="${fx(S[0], 1)}" cy="${fx(S[1], 1)}" r="10" style="fill:var(--gold);stroke:var(--text);stroke-width:1.5"/>`;
+        if (tilt > 3) g += `<path d="${arcPath(x0, y0, 52, 0, -b)}" style="fill:none;stroke:var(--text);stroke-width:2"/><text x="${x0 + 60}" y="${y0 - 8}">β ${fx(tilt, 0)}°</text>`;
+        if (aoi > 2) g += `<path d="${arcPath(C[0], C[1], 46, aU, aN)}" style="fill:none;stroke:var(--bad);stroke-width:3"/>`;
+        g += `<text x="472" y="22" text-anchor="end">Noon sun α = ${fx(alt, 1)}°</text><text x="472" y="42" text-anchor="end" style="fill:var(--bad)">Incidence = ${fx(aoi, 1)}°</text>
+          <text class="m s" x="10" y="286">South</text><text class="m s" x="470" y="286" text-anchor="end">North</text>`;
+        svg.innerHTML = g;
+        const rule = season === "year" ? "latitude" : season === "summer" ? "latitude − 15°" : "latitude + 15°";
+        const n = [];
+        n.push(["info", `${season === "year" ? "Year-round" : season === "summer" ? "Summer" : "Winter"} rule of thumb: tilt = ${rule}. The noon sun altitude is shown for ${season === "year" ? "the equinox (the yearly average)" : season === "summer" ? "the summer solstice" : "the winter solstice"}.`]);
+        if (rawTilt < 0 || rawTilt > 90) n.push(["warn", `The rule gives ${fx(rawTilt, 0)}°, which is out of range, so the tilt is held at ${fx(tilt, 0)}°.`]);
+        if (north) n.push(["warn", "At this latitude and season the noon sun is north of overhead, so a south-facing panel sees it from behind its tilt line."]);
+        n.push(["info", "Always face the array true south (northern hemisphere). Angle of incidence is the angle between the sun ray and the line square to the panel; 0° is best."]);
+        notes(card, n);
+        html(card, "how", `<p>Fixed tilt: <code>latitude</code> for the year, <code>latitude − 15°</code> to favor summer (high sun), <code>latitude + 15°</code> to favor winter (low sun).</p>
+          <p>Noon altitude = 90° − latitude + declination. A panel is square-on when <code>tilt + altitude = 90°</code>, so <code>angle of incidence = |90° − altitude − tilt|</code>. Output at noon ∝ cos(incidence).</p>
+          <p>Now: <code>tilt = ${rule.replace("latitude", lat + "°")} = ${fx(tilt, 1)}°</code>; <code>altitude = ${fx(alt, 2)}°</code>; <code>incidence = |90 − ${fx(alt, 2)} − ${fx(tilt, 1)}| = ${fx(aoi, 2)}°</code>.</p>
+          <p>Angle B on the Amber Book card is measured to a line square to the panel: <code>B = 90° − tilt</code>. Ching §11.15 suggests latitude + 10° for solar collectors that favor winter heating.</p>`);
+      };
+    },
+    src: "are_kb: sun-path-and-solar-geometry (Amber Book PA cards 39–42: tilt = latitude; −15° summer, +15° winter; this wiki article is marked “emerging” and awaits a primary reference); Ching §1.18 (altitude), §11.15 (active solar collectors: latitude + 10°)."
+  };
+
+  /* ============================== TOOL 9: Cut/fill section profile ============================== */
+  const PROFILES = {
+    crest: { l: "Hill crest", pts: [[0, 98], [40, 100], [80, 105], [120, 110], [160, 108], [200, 103], [240, 101]] },
+    slope: { l: "Gentle slope", pts: [[0, 100], [40, 101.5], [80, 103], [120, 105], [160, 107], [200, 109], [240, 110.5]] },
+    valley: { l: "Valley", pts: [[0, 108], [40, 105], [80, 101], [120, 99], [160, 100], [200, 104], [240, 108]] }
+  };
+  function groundAt(pts, x) {
+    if (x <= pts[0][0]) return pts[0][1];
+    for (let i = 1; i < pts.length; i++) if (x <= pts[i][0]) { const a = pts[i - 1], b = pts[i]; return a[1] + (b[1] - a[1]) * (x - a[0]) / (b[0] - a[0]); }
+    return pts[pts.length - 1][1];
+  }
+  /* Cut = ground above the pad, fill = ground below the pad, between pad edges a and b. Areas in sf (ft x ft). */
+  function cutFill(pts, pad, a, b) {
+    const xs = [a, b]; pts.forEach(p => { if (p[0] > a && p[0] < b) xs.push(p[0]); });
+    xs.sort((m, n) => m - n);
+    let cut = 0, fill = 0; const polys = [];
+    for (let i = 1; i < xs.length; i++) {
+      const x0 = xs[i - 1], x1 = xs[i], w = x1 - x0;
+      if (w <= 0) continue;
+      const g0 = groundAt(pts, x0), g1 = groundAt(pts, x1), d0 = g0 - pad, d1 = g1 - pad;
+      if (d0 >= 0 && d1 >= 0) { cut += w * (d0 + d1) / 2; polys.push({ t: "cut", p: [[x0, g0], [x1, g1], [x1, pad], [x0, pad]] }); }
+      else if (d0 <= 0 && d1 <= 0) { fill += w * (-d0 - d1) / 2; polys.push({ t: "fill", p: [[x0, g0], [x1, g1], [x1, pad], [x0, pad]] }); }
+      else {
+        const tt = d0 / (d0 - d1), xc = x0 + tt * w;
+        if (d0 > 0) { cut += w * tt * d0 / 2; fill += w * (1 - tt) * (-d1) / 2; polys.push({ t: "cut", p: [[x0, g0], [xc, pad], [x0, pad]] }, { t: "fill", p: [[xc, pad], [x1, g1], [x1, pad]] }); }
+        else { fill += w * tt * (-d0) / 2; cut += w * (1 - tt) * d1 / 2; polys.push({ t: "fill", p: [[x0, g0], [xc, pad], [x0, pad]] }, { t: "cut", p: [[xc, pad], [x1, g1], [x1, pad]] }); }
+      }
+    }
+    return { cut, fill, polys };
+  }
+  const T_SEC = {
+    id: "sec", title: "Section cut and fill balance", div: ["PA"], wide: true, diagram: true, group: "diagram",
+    why: "Exam use: slide a building pad up and down an existing-grade section and watch cut and fill trade off.",
+    body() {
+      return `<div class="tl-split"><div class="tl-col"><div class="tl-in">
+        <label class="tl-f full"><span class="tl-fl">Existing grade</span><select class="tl-sel" data-in="prof">${Object.keys(PROFILES).map(k => `<option value="${k}">${PROFILES[k].l}</option>`).join("")}</select></label>
+        <label class="tl-f full"><span class="tl-fl">Pad elevation: <b data-v="elev">104</b> ft</span><input type="range" data-in="elev" min="96" max="112" step="0.05" value="104"></label>
+        ${fRange("pstart", "Pad starts at station", "ft", 60, 0, 200, 5)}${fRange("pw", "Pad width", "ft", 120, 20, 240, 5)}
+        ${fNum("len", "Pad length (across the section)", "ft", 100, 0, 100000)}
+        <div class="tl-f full"><button type="button" class="tl-btn" data-act="bal">Set pad to balance cut and fill</button></div></div>
+        <div class="tl-res">${res("Cut area", "cut", "sf", 1)}${res("Fill area", "fill", "sf", 1)}${res("Cut − fill", "net", "sf")}${res("Cut volume", "cutcy", "cy")}${res("Fill volume", "fillcy", "cy")}</div></div>
+        <div class="tl-col"><svg class="tl-svg" viewBox="0 0 480 300" style="touch-action:pan-y" role="img" aria-label="Ground profile with a proposed pad, cut and fill shaded"></svg><p class="tl-why" style="margin:0 0 0;text-align:center" data-out="ve"></p></div></div>
+        <div data-out="notes"></div>`;
+    },
+    init(card) {
+      const svg = card.querySelector("svg"), E = $in(card, "elev");
+      const dims = { l: 40, r: 470, t: 24, b: 250 };
+      let range = [96, 112];
+      function setRange() {
+        const pts = PROFILES[$in(card, "prof").value].pts, ys = pts.map(p => p[1]);
+        range = [Math.floor(Math.min.apply(null, ys)) - 2, Math.ceil(Math.max.apply(null, ys)) + 2];
+        E.min = range[0]; E.max = range[1];
+      }
+      function balance(pts, a, b) {
+        let lo = range[0], hi = range[1];
+        for (let i = 0; i < 50; i++) { const m = (lo + hi) / 2, r = cutFill(pts, m, a, b); if (r.cut > r.fill) lo = m; else hi = m; }
+        return (lo + hi) / 2;
+      }
+      const geom = () => {
+        const pts = PROFILES[$in(card, "prof").value].pts;
+        let ps = Number($in(card, "pstart").value), pw = Number($in(card, "pw").value);
+        ps = Math.max(0, Math.min(240, ps)); const pe = Math.min(240, ps + pw);
+        return { pts, a: ps, b: pe };
+      };
+      card._upd = function (e) {
+        if (e && e.target && e.target.dataset && e.target.dataset.in === "prof") { setRange(); const g = geom(); E.value = (Math.round(balance(g.pts, g.a, g.b) * 20) / 20); }
+        const { vals, bad } = rd(card, [["len", "Pad length", 0, 100000, { minEx: true }]]);
+        card.querySelectorAll("[data-v]").forEach(b => { b.textContent = $in(card, b.dataset.v).value; });
+        const g = geom(), pad = Number(E.value);
+        if (g.b - g.a < 1) { return showBad(card, ["The pad has no width. Move the start station left or reduce the width."]); }
+        const r = cutFill(g.pts, pad, g.a, g.b);
+        const sx = (x) => dims.l + x / 240 * (dims.r - dims.l), sy = (y) => dims.b - (y - range[0]) / (range[1] - range[0]) * (dims.b - dims.t);
+        let s = `<rect x="${dims.l}" y="${dims.t}" width="${dims.r - dims.l}" height="${dims.b - dims.t}" style="fill:none;stroke:var(--border2)"/>`;
+        s += `<polygon points="${g.pts.map(p => fx(sx(p[0]), 1) + "," + fx(sy(p[1]), 1)).join(" ")} ${fx(sx(240), 1)},${dims.b} ${fx(sx(0), 1)},${dims.b}" style="fill:var(--surface2)"/>`;
+        r.polys.forEach(p => { s += `<polygon points="${p.p.map(q => fx(sx(q[0]), 1) + "," + fx(sy(q[1]), 1)).join(" ")}" style="fill:${p.t === "cut" ? "var(--bad)" : "var(--indigo)"};opacity:.6"/>`; });
+        s += `<polyline points="${g.pts.map(p => fx(sx(p[0]), 1) + "," + fx(sy(p[1]), 1)).join(" ")}" style="fill:none;stroke:var(--text);stroke-width:2.5"/>`;
+        s += `<line x1="${fx(sx(g.a), 1)}" y1="${fx(sy(pad), 1)}" x2="${fx(sx(g.b), 1)}" y2="${fx(sy(pad), 1)}" style="stroke:var(--gold);stroke-width:5"/>`;
+        s += `<circle data-handle="1" cx="${fx(sx((g.a + g.b) / 2), 1)}" cy="${fx(sy(pad), 1)}" r="12" style="fill:var(--gold);stroke:var(--text);stroke-width:2;cursor:ns-resize"/>`;
+        // labels
+        const lab = (t) => {
+          let best = null, area = 0;
+          r.polys.filter(p => p.t === t).forEach(p => { const xs = p.p.map(q => q[0]), ys = p.p.map(q => q[1]); const ar = (Math.max.apply(null, xs) - Math.min.apply(null, xs)) * (Math.max.apply(null, ys) - Math.min.apply(null, ys)); if (ar > area) { area = ar; best = p; } });
+          if (!best || area < 40) return "";
+          const cx = best.p.reduce((m, q) => m + q[0], 0) / best.p.length, cy = best.p.reduce((m, q) => m + q[1], 0) / best.p.length;
+          return `<text x="${fx(sx(cx), 1)}" y="${fx(sy(cy) + 5, 1)}" text-anchor="middle" style="font-weight:800">${t.toUpperCase()}</text>`;
+        };
+        s += lab("cut") + lab("fill");
+        s += `<text class="m s" x="${dims.l - 4}" y="${dims.t + 10}" text-anchor="end">${range[1]}</text><text class="m s" x="${dims.l - 4}" y="${dims.b}" text-anchor="end">${range[0]}</text>`;
+        s += `<text class="m s" x="${dims.l}" y="272">0</text><text class="m s" x="${(dims.l + dims.r) / 2}" y="272" text-anchor="middle">120 ft</text><text class="m s" x="${dims.r}" y="272" text-anchor="end">240 ft</text>`;
+        s += `<text class="m s" x="${dims.l + 4}" y="292">Elevation (ft), station (ft)</text><text x="${dims.r - 4}" y="${dims.t + 18}" text-anchor="end" style="fill:var(--gold)">Pad ${fx(pad, 2)}</text>`;
+        svg.innerHTML = s;
+        const ve = ((dims.b - dims.t) / (range[1] - range[0])) / ((dims.r - dims.l) / 240);
+        out(card, "ve", "Vertical scale exaggerated about " + nf(ve, 0) + " times. Drag the gold dot or use the slider.");
+        if (bad.length) { out(card, "cutcy", "—"); out(card, "fillcy", "—"); html(card, "notes", `<div class="tl-note bad"><b>${ICON.bad}</b>${bad[0]}</div>`); out(card, "cut", nf(r.cut, 0)); out(card, "fill", nf(r.fill, 0)); out(card, "net", nf(r.cut - r.fill, 0)); return; }
+        const cutcy = r.cut * vals.len / 27, fillcy = r.fill * vals.len / 27, net = r.cut - r.fill;
+        out(card, "cut", nf(r.cut, 0)); out(card, "fill", nf(r.fill, 0)); out(card, "net", nf(net, 0)); out(card, "cutcy", nf(cutcy, 0)); out(card, "fillcy", nf(fillcy, 0));
+        const n = [];
+        const tot = r.cut + r.fill, bal = tot > 0 && Math.abs(net) / tot < 0.02;
+        if (tot === 0) n.push(["ok", "The pad sits right on the existing grade: no cut and no fill."]);
+        else if (bal) n.push(["ok", "Cut and fill are balanced (within 2%). No soil to haul away or import."]);
+        else if (net > 0) n.push(["warn", `Too much cut: about ${nf(net * vals.len / 27, 0)} cy of soil must be hauled away. Raise the pad to balance.`]);
+        else n.push(["warn", `Too much fill: about ${nf(-net * vals.len / 27, 0)} cy of soil must be imported. Lower the pad to balance.`]);
+        n.push(["info", "These are bank-volume areas with vertical pad edges and no side slopes or topsoil. Apply swell and shrink with the cut and fill tool above."]);
+        notes(card, n);
+        html(card, "how", `<p>Between the pad edges, compare the existing grade line to the pad line. Ground ABOVE the pad is <b>cut</b>; ground BELOW it is <b>fill</b>. Each strip between profile points is a trapezoid: <code>area = width × (d1 + d2) ÷ 2</code>, where d is the height difference. Strips that cross the pad line are split into two triangles.</p>
+          <p>Now: cut = <code>${nf(r.cut, 0)} sf</code>, fill = <code>${nf(r.fill, 0)} sf</code>. Volume = area × pad length ÷ 27: <code>${nf(r.cut, 0)} × ${nf(vals.len, 0)} ÷ 27 = ${nf(cutcy, 0)} cy</code>.</p>
+          <p>The balance point is where cut area = fill area. Raising the pad adds fill and removes cut.</p>`);
+      };
+      card.querySelector('[data-act="bal"]').addEventListener("click", function () {
+        const g = geom(); E.value = Math.round(balance(g.pts, g.a, g.b) * 20) / 20; card._upd();
+      });
+      /* drag the gold handle */
+      let drag = false;
+      const move = (ev) => {
+        const rc = svg.getBoundingClientRect(), yv = (ev.clientY - rc.top) * (300 / rc.height);
+        let el = range[0] + (dims.b - yv) / (dims.b - dims.t) * (range[1] - range[0]);
+        el = Math.max(range[0], Math.min(range[1], Math.round(el * 20) / 20)); E.value = el; card._upd();
+      };
+      svg.addEventListener("pointerdown", ev => { if (ev.target.closest && ev.target.closest("[data-handle]")) { drag = true; try { svg.setPointerCapture(ev.pointerId); } catch (x) { } ev.preventDefault(); } });
+      svg.addEventListener("pointermove", ev => { if (drag) move(ev); });
+      const up = () => { drag = false; };
+      svg.addEventListener("pointerup", up); svg.addEventListener("pointercancel", up);
+      svg.addEventListener("touchstart", ev => { if (ev.target.closest && ev.target.closest("[data-handle]")) ev.preventDefault(); }, { passive: false });
+      setRange();
+      const g0 = geom(); E.value = 104;
+      card._pre = function () { };
+    },
+    src: "Ching §1.12–1.14 (soils, topography, grading); are_kb: site-grading-and-stormwater (cut and fill, bank measure; balanced site grading). Area method is standard average-end-area geometry for a simple polyline section."
+  };
+
+  const TOOLS = [T_OCC, T_ZONE, T_EARTH, T_SLOPE, T_STAIR, T_EFF, T_SUN, T_PV, T_SEC];
+
+  /* ------------------------------ BUILD ------------------------------ */
+  function build() {
+    injectStyles();
+    const firstPanel = document.querySelector(".panel");
+    const parent = firstPanel ? firstPanel.parentElement : document.body;
+    const panel = document.createElement("section");
+    panel.id = PID; panel.className = "panel";
+    const chips = ["All", "PA", "PPD", "PDD"].map((d, i) => `<button type="button" class="tl-chip${i === 0 ? " active" : ""}" data-div="${d}">${d}</button>`).join("");
+    const sec = (g, title) => `<h2 class="tl-sec" data-sec="${g}">${title}</h2><div class="tl-grid" data-grid="${g}">` + TOOLS.filter(t => t.group === g).map(t =>
+      `<article class="tl-card${t.wide ? " tl-wide" : ""}" data-tool="${t.id}" data-div="${t.div.join(" ")}">
+        <div class="tl-top"><h3>${t.title}</h3><div class="tl-badges">${badge(t.div)}</div></div>
+        <p class="tl-why">${t.why}</p>${t.body()}
+        <details class="tl-how"><summary>How it works</summary><div data-out="how"></div></details>
+        <p class="tl-src"><b>Source:</b> ${t.src}</p></article>`).join("") + `</div>`;
+    panel.innerHTML = `<h2 class="tl-h">Tools</h2>
+      <p class="tl-intro">Exam calculators and live diagrams. Change a number or move a slider and the answer updates. Open “How it works” under each tool to see the formula with your numbers. Always confirm values against the code edition your jurisdiction adopts.</p>
+      <div class="tl-chips"><span class="tl-flabel">Division</span>${chips}</div>
+      ${sec("calc", "Calculators")}${sec("diagram", "Live diagrams")}`;
+    parent.appendChild(panel);
+    TOOLS.forEach(t => { const c = panel.querySelector('[data-tool="' + t.id + '"]'); t.init(c); c._upd(); });
+    const upd = (e) => { const c = e.target.closest && e.target.closest(".tl-card"); if (c && c._upd) c._upd(e); };
+    panel.addEventListener("input", upd); panel.addEventListener("change", upd);
+    panel.addEventListener("click", function (e) {
+      const ch = e.target.closest(".tl-chip"); if (!ch) return;
+      panel.querySelectorAll(".tl-chip").forEach(b => b.classList.toggle("active", b === ch));
+      const d = ch.dataset.div;
+      panel.querySelectorAll(".tl-card").forEach(c => { c.hidden = !(d === "All" || c.dataset.div.split(" ").indexOf(d) >= 0); });
+      ["calc", "diagram"].forEach(g => { const any = panel.querySelector('[data-grid="' + g + '"] .tl-card:not([hidden])'); panel.querySelector('[data-sec="' + g + '"]').hidden = !any; panel.querySelector('[data-grid="' + g + '"]').hidden = !any; });
+    });
+  }
+
+  function buildTab() {
+    const tabs = document.querySelector(".nav-tabs");
+    if (!tabs || document.getElementById("tl-nav-tab")) return;
+    const btn = document.createElement("button");
+    btn.className = "nav-tab"; btn.id = "tl-nav-tab"; btn.setAttribute("role", "tab");
+    btn.setAttribute("aria-selected", "false"); btn.setAttribute("aria-controls", PID);
+    btn.textContent = "🧮 Tools";
+    btn.addEventListener("click", function () {
+      if (typeof window.switchPanel === "function") window.switchPanel(PID, btn);
+      else {
+        document.querySelectorAll(".nav-tab").forEach(b => b.classList.remove("active"));
+        document.querySelectorAll(".panel").forEach(p => p.classList.remove("active"));
+        btn.classList.add("active"); document.getElementById(PID).classList.add("active");
+      }
+    });
+    const q = tabs.querySelector('[aria-controls="quiz"]');
+    if (q && q.parentElement === tabs) q.insertAdjacentElement("afterend", btn); else tabs.appendChild(btn);
+  }
+
+  function start() { build(); buildTab(); }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
+})();
+
+</script>
+<script id="ui-refresh-js">
+(function () {
+  "use strict";
+  var ICONS = {"flashcards": "<svg class=\"ico\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><rect x=\"2.5\" y=\"4.5\" width=\"9\" height=\"9\"/><path d=\"M5 2.5h8.5V11\"/></svg>", "tables": "<svg class=\"ico\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><rect x=\"2\" y=\"2.5\" width=\"12\" height=\"11\"/><path d=\"M2 6h12M2 9.75h12M6.5 6v7.5\"/></svg>", "summary": "<svg class=\"ico\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M3.5 1.75h6l3 3v9.5h-9z\"/><path d=\"M9.5 1.75v3h3M5.75 8h4.5M5.75 10.5h4.5M5.75 13h2.5\"/></svg>", "quiz": "<svg class=\"ico\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><rect x=\"2.25\" y=\"2.25\" width=\"11.5\" height=\"11.5\"/><path d=\"M5 8.2l2.1 2.1L11 6\"/></svg>", "library": "<svg class=\"ico\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"M2.5 13.5V2.5l11 11z\"/><path d=\"M5 11V8.25L7.75 11z\"/></svg>", "tools": "<svg class=\"ico\" viewBox=\"0 0 16 16\" width=\"16\" height=\"16\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.5\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><rect x=\"3\" y=\"1.75\" width=\"10\" height=\"12.5\"/><path d=\"M5.5 4.75h5M5.5 8h.5M8 8h.5M10.5 8h0M5.5 11h.5M8 11h.5M10.5 11h0\"/></svg>"};
+  function key(b) {
+    var k = b.getAttribute("aria-controls");
+    if (k) return k;
+    if (b.id === "lib-nav-tab") return "library";
+    if (b.id === "tl-nav-tab") return "tools";
+    return (b.textContent || "").toLowerCase().replace(/[^a-z]/g, "");
+  }
+  function fixTab(b) {
+    if (b.querySelector("svg.ico")) return;
+    var n = b.firstChild;
+    while (n && n.nodeType === 3 && !n.nodeValue.trim()) n = n.nextSibling;
+    if (n && n.nodeType === 3) n.nodeValue = n.nodeValue.replace(/^[^\p{L}\p{N}]+/u, "");
+    var ico = ICONS[key(b)];
+    if (ico) b.insertAdjacentHTML("afterbegin", ico);
+  }
+  function fixTabs() { document.querySelectorAll(".nav-tab").forEach(fixTab); }
+  function chips() {
+    document.querySelectorAll(".fc-filter, .table-btn").forEach(function (el) {
+      if (!el.hasAttribute("tabindex")) { el.setAttribute("tabindex", "0"); el.setAttribute("role", "button"); }
+    });
+  }
+  document.addEventListener("keydown", function (e) {
+    var t = e.target;
+    if (t && t.matches && t.matches(".fc-filter, .table-btn") && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault(); t.click();
+    }
+  });
+  function init() {
+    fixTabs(); chips();
+    var tabs = document.querySelector(".nav-tabs");
+    if (tabs && window.MutationObserver) new MutationObserver(fixTabs).observe(tabs, { childList: true });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
 })();
 </script>
 </body>
