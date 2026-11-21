@@ -3626,9 +3626,10 @@ document.addEventListener('keydown', e=>{
 })();
 </script>
 <script id="tools-script">
-/* ===== TOOLS TAB (calculators + live diagrams) ===== */
 /* ===== TOOLS TAB (calculators + live diagrams) — Site 1: PA / PPD / PDD =====
    Plain ES2017, no dependencies. Adds a "Tools" tab right after "Practice Q".
+   Every tool has: Start here (example + answer), Try one (practice), and three steps:
+   1 Enter the givens, 2 Read the result, 3 Check the rule.
    Only global touched: reads window.switchPanel. */
 (function () {
   "use strict";
@@ -3639,86 +3640,126 @@ document.addEventListener('keydown', e=>{
   const nf = (n, d) => Number.isFinite(n) ? n.toLocaleString("en-US", { maximumFractionDigits: d == null ? 2 : d }) : "—";
   const fx = (n, d) => Number.isFinite(n) ? n.toFixed(d) : "—";
   const ftIn = (inch) => { const f = Math.floor(inch / 12 + 1e-9); const r = inch - f * 12; return f + "′ " + nf(r, 1) + "″"; };
+  const ri = (a, b) => a + Math.floor(Math.random() * (b - a + 1));
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
   /* ------------------------------ STYLES ------------------------------ */
   function injectStyles() {
     if (document.getElementById("tl-styles")) return;
     const css = `
-#tools{padding:24px 20px 48px;max-width:1180px;margin:0 auto;color:var(--text)}
+#tools{padding:24px 20px 48px;max-width:1180px;margin:0 auto;color:var(--text);font-family:var(--font-sans,system-ui,sans-serif)}
 #tools *{box-sizing:border-box}
-#tools .tl-h{font-size:28px;font-weight:900;letter-spacing:-.03em;text-transform:uppercase;color:var(--text);margin:0 0 6px}
-#tools .tl-intro{color:var(--muted);font-size:14px;line-height:1.5;margin:0 0 16px;max-width:72ch}
-#tools .tl-chips{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
-#tools .tl-flabel{font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-right:4px}
-#tools .tl-chip{background:var(--surface);color:var(--muted);border:1px solid var(--border);border-radius:20px;padding:5px 13px;font-size:13px;cursor:pointer;font-family:inherit}
+#tools .tl-h{font-size:28px;font-weight:900;letter-spacing:-.03em;text-transform:uppercase;color:var(--text);margin:0 0 12px}
+#tools .tl-guide{border:1px solid var(--border);border-left:3px solid var(--gold);background:var(--surface);border-radius:2px;padding:12px 14px;margin:0 0 16px;max-width:78ch}
+#tools .tl-guide p{margin:0;font-size:14px;line-height:1.55;color:var(--text)}
+#tools .tl-link{background:none;border:0;border-bottom:1px solid var(--gold);color:var(--gold-ink,var(--gold));font:inherit;font-weight:600;padding:0;cursor:pointer;border-radius:0}
+#tools .tl-link:hover{color:var(--text-bright,var(--text))}
+#tools .tl-bar{display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:6px}
+#tools .tl-bar .tl-sp{flex:1 1 20px}
+#tools .tl-flabel,#tools .tl-k{font:600 10px/1.2 var(--font-mono,ui-monospace,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+#tools .tl-flabel{margin-right:4px}
+#tools .tl-k{display:block;margin-bottom:6px}
+#tools .tl-chip{background:var(--surface);color:var(--muted);border:1px solid var(--border);border-radius:2px;padding:6px 12px;font:600 11px var(--font-mono,ui-monospace,monospace);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
 #tools .tl-chip:hover{color:var(--text);border-color:var(--gold)}
-#tools .tl-chip.active{background:var(--gold);color:#1a1208;border-color:var(--gold);font-weight:600}
-#tools .tl-sec{font-size:13px;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin:26px 0 12px;font-weight:600}
-#tools .tl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;align-items:start}
-#tools .tl-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;min-width:0}
+#tools .tl-chip.active{background:var(--gold);color:#1a1208;border-color:var(--gold)}
+#tools .tl-sec{font:600 11px var(--font-mono,ui-monospace,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:26px 0 12px}
+#tools .tl-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;align-items:start}
+#tools .tl-card{background:var(--surface);border:1px solid var(--border);border-radius:2px;padding:16px;min-width:0}
 #tools .tl-card[hidden]{display:none}
-#tools .tl-card.tl-wide{grid-column:1/-1}
+#tools .tl-card.open{grid-column:1/-1;border-color:var(--border2)}
 #tools .tl-top{display:flex;align-items:flex-start;gap:8px;flex-wrap:wrap;margin-bottom:4px}
 #tools .tl-top h3{font-size:17px;font-weight:800;margin:0;flex:1 1 200px;line-height:1.3;color:var(--text)}
 #tools .tl-badges{display:flex;gap:4px;flex-wrap:wrap}
-#tools .tl-badge{font-size:10.5px;font-weight:700;color:#fff;border-radius:5px;padding:2px 7px;letter-spacing:.04em}
+#tools .tl-badge{font:600 10px var(--font-mono,ui-monospace,monospace);letter-spacing:.08em;color:#fff;border-radius:2px;padding:3px 6px}
 #tools .tl-why{font-size:13px;line-height:1.45;color:var(--muted);margin:0 0 12px}
-#tools .tl-split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:18px;align-items:start}
-#tools .tl-col{min-width:0}
-#tools .tl-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(135px,1fr));gap:10px;margin-bottom:12px}
-#tools .tl-f{display:flex;flex-direction:column;gap:4px;min-width:0}
+#tools .tl-start{border:1px solid var(--border);border-left:3px solid var(--gold);background:var(--inset);border-radius:2px;padding:10px 12px}
+#tools .tl-prob{font-size:14px;line-height:1.5;margin:0 0 10px;color:var(--text)}
+#tools .tl-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+#tools .tl-ans{margin:10px 0 0;font-size:14px;line-height:1.5;font-weight:600;color:var(--text-bright,var(--text));border-top:1px dashed var(--border2);padding-top:8px}
+#tools .tl-ans[hidden]{display:none}
+#tools .tl-btn{background:var(--surface);color:var(--text);border:1px solid var(--border2);border-radius:2px;padding:8px 12px;min-height:36px;font:600 11px var(--font-mono,ui-monospace,monospace);letter-spacing:.08em;text-transform:uppercase;cursor:pointer}
+#tools .tl-btn:hover,#tools .tl-btn:focus-visible{border-color:var(--gold);color:var(--text-bright,var(--text))}
+#tools .tl-btn.pri{border-color:var(--gold);color:var(--gold-ink,var(--gold))}
+#tools .tl-btn.pri:hover{color:var(--text-bright,var(--text))}
+#tools .tl-btn:disabled{opacity:.45;cursor:default}
+#tools .tl-body{margin-top:14px}
+#tools .tl-body[hidden]{display:none}
+#tools .tl-prac{border:1px solid var(--border);border-left:3px solid var(--indigo);background:var(--inset);border-radius:2px;padding:10px 12px;margin-bottom:14px}
+#tools .tl-prac[hidden]{display:none}
+#tools .tl-pq{font-size:14px;line-height:1.5;margin:0 0 10px}
+#tools .tl-arow{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+#tools .tl-arow .tl-f{flex:1 1 200px;max-width:280px}
+#tools .tl-fb{font-size:13.5px;line-height:1.5;margin:10px 0 0;padding:7px 10px;border-left:3px solid var(--border2);background:var(--surface)}
+#tools .tl-fb[hidden]{display:none}
+#tools .tl-fb.ok{border-left-color:var(--ok)}
+#tools .tl-fb.bad{border-left-color:var(--bad)}
+#tools .tl-fb b{margin-right:4px}
+#tools .tl-split{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:22px;align-items:start}
+#tools .tl-s{min-width:0}
+#tools .tl-s3{margin-top:16px}
+#tools .tl-hideres .tl-s2,#tools .tl-hideres .tl-s3,#tools .tl-hideres .tl-fig{display:none}
+#tools .tl-hideres .tl-split{grid-template-columns:minmax(0,1fr)}
+#tools .tl-step{display:flex;align-items:center;gap:8px;font:600 11px var(--font-mono,ui-monospace,monospace);letter-spacing:.12em;text-transform:uppercase;color:var(--text);margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+#tools .tl-step b{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border:1px solid var(--gold);border-radius:2px;color:var(--gold-ink,var(--gold));font-size:11px}
+#tools fieldset.tl-fs{border:0;padding:0;margin:0;min-width:0}
+#tools .tl-in{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:6px}
+#tools .tl-f{display:flex;flex-direction:column;gap:3px;min-width:0}
 #tools .tl-f.full{grid-column:1/-1}
-#tools .tl-fl{font-size:12px;color:var(--muted);line-height:1.3}
-#tools .tl-fl b{color:var(--text)}
-#tools .tl-fi{display:flex;align-items:center;gap:6px;background:var(--inset);border:1px solid var(--border2);border-radius:8px;padding:0 10px}
-#tools .tl-fi:focus-within{border-color:var(--indigo)}
+#tools .tl-fl{font-size:12.5px;font-weight:600;color:var(--text);line-height:1.3}
+#tools .tl-fl b{color:var(--text-bright,var(--text))}
+#tools .tl-fh{font-size:12px;color:var(--muted);line-height:1.35}
+#tools .tl-fi{display:flex;align-items:center;gap:6px;background:var(--inset);border:1px solid var(--field,var(--border2));border-radius:2px;padding:0 10px;margin-top:2px}
+#tools .tl-fi:focus-within{border-color:var(--gold)}
 #tools .tl-fi input{flex:1;min-width:0;width:100%;background:transparent;border:0;color:var(--text);font:inherit;font-size:15px;padding:9px 0;outline:none}
-#tools .tl-fi i{font-style:normal;color:var(--muted);font-size:12px;white-space:nowrap}
+#tools .tl-fi i{font:12px var(--font-mono,ui-monospace,monospace);font-style:normal;color:var(--muted);white-space:nowrap}
 #tools .tl-fi:has(input[aria-invalid="true"]){border-color:var(--bad)}
 #tools input[aria-invalid="true"]{color:var(--bad)}
-#tools .tl-sel{width:100%;min-width:0;background:var(--inset);border:1px solid var(--border2);color:var(--text);border-radius:8px;padding:9px 10px;font:inherit;font-size:14px}
-#tools .tl-sel:focus{outline:none;border-color:var(--indigo)}
+#tools .tl-sel{width:100%;min-width:0;background:var(--inset);border:1px solid var(--field,var(--border2));color:var(--text);border-radius:2px;padding:9px 10px;font:inherit;font-size:14px;margin-top:2px}
+#tools .tl-sel:focus{outline:none;border-color:var(--gold)}
 #tools .tl-chk{display:flex;gap:8px;align-items:flex-start;font-size:13px;line-height:1.4;color:var(--text);grid-column:1/-1;cursor:pointer}
 #tools .tl-chk input{width:18px;height:18px;margin-top:1px;accent-color:var(--gold);flex:0 0 auto}
+#tools .tl-chk .tl-fl{display:block}
 #tools input[type=range]{width:100%;accent-color:var(--gold);margin:2px 0}
-#tools .tl-seg{display:flex;gap:6px;flex-wrap:wrap;grid-column:1/-1}
-#tools .tl-pill{display:inline-flex;align-items:center;gap:6px;background:var(--inset);border:1px solid var(--border2);border-radius:20px;padding:6px 12px;font-size:13px;cursor:pointer;color:var(--text)}
+#tools .tl-seg{display:flex;gap:6px;flex-wrap:wrap;margin-top:4px}
+#tools .tl-pill{display:inline-flex;align-items:center;gap:6px;background:var(--inset);border:1px solid var(--field,var(--border2));border-radius:2px;padding:7px 12px;font-size:13px;cursor:pointer;color:var(--text)}
 #tools .tl-pill:has(input:checked){background:var(--gold);color:#1a1208;border-color:var(--gold);font-weight:600}
 #tools .tl-pill input{position:absolute;opacity:0;width:1px;height:1px}
-#tools .tl-pill:has(input:focus-visible){outline:2px solid var(--indigo);outline-offset:2px}
-#tools .tl-btn{background:var(--inset);color:var(--text);border:1px solid var(--border2);border-radius:8px;padding:8px 12px;font:inherit;font-size:13px;cursor:pointer}
-#tools .tl-btn:hover{border-color:var(--gold)}
-#tools .tl-res{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:6px}
-#tools .tl-r{background:var(--inset);border:1px solid var(--border);border-radius:8px;padding:8px 10px;min-width:0}
+#tools .tl-pill:has(input:focus-visible){outline:2px solid var(--gold);outline-offset:2px}
+#tools .tl-res{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px;margin-bottom:6px}
+#tools .tl-r{background:var(--inset);border:1px solid var(--border);border-radius:2px;padding:9px 10px;min-width:0}
 #tools .tl-r.key{border-color:var(--gold)}
-#tools .tl-rl{display:block;font-size:11px;color:var(--muted);line-height:1.3;margin-bottom:2px}
+#tools .tl-rl{display:block;font:600 10px/1.3 var(--font-mono,ui-monospace,monospace);letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
 #tools .tl-rv{font-size:13px;color:var(--muted);overflow-wrap:anywhere}
-#tools .tl-rv b{font-size:19px;color:var(--text);font-weight:800}
-#tools .tl-note{font-size:13px;line-height:1.45;padding:7px 10px;border-radius:8px;border-left:4px solid var(--border2);background:var(--inset);margin-top:6px;color:var(--text)}
+#tools .tl-rv b{font-size:20px;color:var(--text-bright,var(--text));font-weight:700}
+#tools .tl-rm{display:block;font-size:12.5px;line-height:1.4;color:var(--text);margin-top:4px;opacity:.9}
+#tools .tl-note{font-size:13px;line-height:1.45;padding:7px 10px;border-radius:0;border-left:3px solid var(--border2);background:var(--inset);margin-top:6px;color:var(--text)}
 #tools .tl-note b{margin-right:6px}
 #tools .tl-note.ok{border-left-color:var(--ok)}
 #tools .tl-note.warn{border-left-color:var(--gold)}
 #tools .tl-note.bad{border-left-color:var(--bad)}
 #tools .tl-note.info{border-left-color:var(--indigo)}
 #tools .tl-how{margin-top:12px;border-top:1px solid var(--border);padding-top:8px;font-size:13px}
-#tools .tl-how summary{cursor:pointer;color:var(--muted);font-weight:600}
+#tools .tl-how summary{cursor:pointer;color:var(--muted);font:600 11px var(--font-mono,ui-monospace,monospace);letter-spacing:.1em;text-transform:uppercase}
 #tools .tl-how p{margin:7px 0;line-height:1.5;color:var(--text)}
-#tools code{background:var(--inset);padding:1px 5px;border-radius:4px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;overflow-wrap:anywhere}
+#tools code{background:var(--inset);padding:1px 5px;border-radius:2px;font-family:var(--font-mono,ui-monospace,Menlo,Consolas,monospace);font-size:12px;overflow-wrap:anywhere}
 #tools .tl-src{font-size:12px;color:var(--muted);margin:10px 0 0;line-height:1.45}
+#tools .tl-foot{font-size:12px;color:var(--muted);margin:18px 0 0;line-height:1.45}
 #tools .tl-flags{width:100%;border-collapse:collapse;font-size:13px;margin-top:6px}
 #tools .tl-flags td{padding:5px 6px;border-top:1px solid var(--border);vertical-align:top;line-height:1.35}
 #tools .tl-flags td:last-child{white-space:nowrap;text-align:right;font-weight:700}
 #tools .tl-flags .y{color:var(--ok)}
 #tools .tl-flags .n{color:var(--bad)}
-#tools .tl-svg{width:100%;max-width:560px;height:auto;display:block;margin:0 auto 8px;background:var(--inset);border:1px solid var(--border);border-radius:10px;color:var(--text)}
+#tools .tl-svg{width:100%;max-width:560px;height:auto;display:block;margin:8px auto;background:var(--inset);border:1px solid var(--border);border-radius:2px;color:var(--text)}
 #tools .tl-svg text{fill:var(--text);font:600 15px -apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
 #tools .tl-svg text.m{fill:var(--muted);font-weight:500}
 #tools .tl-svg text.s{font-size:13px}
 @media(max-width:760px){
 #tools{padding:18px 16px 40px}
 #tools .tl-grid{grid-template-columns:minmax(0,1fr)}
-#tools .tl-split{grid-template-columns:minmax(0,1fr)}
+#tools .tl-split{grid-template-columns:minmax(0,1fr);gap:16px}
 #tools .tl-h{font-size:24px}
+#tools .tl-btn{flex:1 1 auto}
+#tools .tl-bar .tl-btn{flex:0 1 auto}
 }`;
     const st = document.createElement("style");
     st.id = "tl-styles";
@@ -3727,18 +3768,28 @@ document.addEventListener('keydown', e=>{
   }
 
   /* ------------------------------ HELPERS ------------------------------ */
-  function fNum(name, label, unit, value, min, max, step) {
-    return `<label class="tl-f"><span class="tl-fl">${label}</span><span class="tl-fi"><input type="number" inputmode="decimal" data-in="${name}" value="${value}" min="${min}" max="${max}" step="${step || "any"}"><i>${unit || ""}</i></span></label>`;
+  /* Number input with a plain help line under the label. */
+  function fNum(name, label, unit, value, min, max, step, help) {
+    return `<label class="tl-f"><span class="tl-fl">${label}</span><span class="tl-fh">${help}</span><span class="tl-fi"><input type="number" inputmode="decimal" data-in="${name}" value="${value}" min="${min}" max="${max}" step="${step || "any"}"><i>${unit || ""}</i></span></label>`;
   }
-  function fRange(name, label, unit, value, min, max, step) {
-    return `<label class="tl-f full"><span class="tl-fl">${label}: <b data-v="${name}">${value}</b> ${unit}</span><input type="range" data-in="${name}" min="${min}" max="${max}" step="${step}" value="${value}"></label>`;
+  function fRange(name, label, unit, value, min, max, step, help) {
+    return `<label class="tl-f full"><span class="tl-fl">${label}: <b data-v="${name}">${value}</b> ${unit}</span><span class="tl-fh">${help}</span><input type="range" data-in="${name}" min="${min}" max="${max}" step="${step}" value="${value}"></label>`;
   }
+  function fSel(name, label, help, opts) {
+    return `<label class="tl-f full"><span class="tl-fl">${label}</span><span class="tl-fh">${help}</span><select class="tl-sel" data-in="${name}">${opts}</select></label>`;
+  }
+  function fChk(name, label, help) {
+    return `<label class="tl-chk"><input type="checkbox" data-in="${name}"><span><span class="tl-fl">${label}</span><span class="tl-fh">${help}</span></span></label>`;
+  }
+  /* Result tile: label, big value, unit, and a one-sentence meaning filled at runtime. */
   function res(label, name, unit, key) {
-    return `<div class="tl-r${key ? " key" : ""}"><span class="tl-rl">${label}</span><span class="tl-rv"><b data-out="${name}">—</b>${unit ? " " + unit : ""}</span></div>`;
+    return `<div class="tl-r${key ? " key" : ""}"><span class="tl-rl">${label}</span><span class="tl-rv"><b data-out="${name}">—</b>${unit ? " " + unit : ""}</span><span class="tl-rm" data-out="${name}_m"></span></div>`;
   }
   const $in = (card, n) => card.querySelector('[data-in="' + n + '"]');
   function out(card, n, t) { const e = card.querySelector('[data-out="' + n + '"]'); if (e) e.textContent = t; }
   function html(card, n, h) { const e = card.querySelector('[data-out="' + n + '"]'); if (e) e.innerHTML = h; }
+  /* Plain meaning under a result. */
+  function mean(card, n, t) { out(card, n + "_m", t); }
   const ICON = { ok: "✓", warn: "!", bad: "✗", info: "i" };
   function notes(card, list) {
     html(card, "notes", list.map(n => `<div class="tl-note ${n[0]}"><b>${ICON[n[0]]}</b>${n[1]}</div>`).join(""));
@@ -3766,17 +3817,30 @@ document.addEventListener('keydown', e=>{
     return { vals, bad };
   }
   function showBad(card, bad) {
-    card.querySelectorAll("[data-out]").forEach(e => { if (e.tagName === "B" || e.tagName === "SPAN") e.textContent = "—"; });
+    card._v = {};
+    card.querySelectorAll("[data-out]").forEach(e => {
+      const k = e.dataset.out;
+      if (/_m$/.test(k)) e.textContent = "Fix the highlighted input to see what this means.";
+      else if (e.tagName === "B" || e.tagName === "SPAN") e.textContent = "—";
+    });
     html(card, "notes", bad.map(t => `<div class="tl-note bad"><b>${ICON.bad}</b>${t}</div>`).join(""));
     html(card, "how", "<p>Fix the highlighted input to see the steps.</p>");
-    const dg = card.querySelector("svg"); if (dg && card._badDiagram) dg.innerHTML = "";
   }
+  const DIVNAME = { PA: "Programming and Analysis", PPD: "Project Planning and Design", PDD: "Project Development and Documentation" };
   function badge(div) {
     const map = { PA: "--pa", PPD: "--ppd", PDD: "--pdd" };
-    if (div.length === 3) return `<span class="tl-badge" style="background:var(--all3)">ALL 3</span>`;
-    return div.map(d => `<span class="tl-badge" style="background:var(${map[d]})">${d}</span>`).join("");
+    if (div.length === 3) return `<span class="tl-badge" style="--d:var(--all3);background:var(--all3)" title="Programming and Analysis, Project Planning and Design, Project Development and Documentation">ALL 3</span>`;
+    return div.map(d => `<span class="tl-badge" style="--d:var(${map[d]});background:var(${map[d]})" title="${DIVNAME[d]}">${d}</span>`).join("");
   }
-  function f2(n) { return nf(n, 2); }
+  /* Set inputs by data-in name (no events). */
+  function put(card, obj) {
+    Object.keys(obj).forEach(k => {
+      const el = $in(card, k); if (!el) return;
+      if (el.type === "checkbox") el.checked = !!obj[k]; else el.value = String(obj[k]);
+    });
+  }
+  /* Tolerance for practice answers: 1% of the value or the natural rounding, whichever is larger. */
+  const tolOf = (val, nat) => Math.max(Math.abs(val) * 0.01, nat);
 
   /* ------------------------------ DATA ------------------------------ */
   /* IBC 2021 Table 1004.5 — maximum floor area allowance per occupant (sf). */
@@ -3799,22 +3863,43 @@ document.addEventListener('keydown', e=>{
     { l: "Parking garages", f: 200, b: "gross" }
   ];
 
+
   /* ============================== TOOL 1: Occupant load + egress ============================== */
   const T_OCC = {
-    id: "occ", title: "Occupant load and egress", div: ["PA", "PPD", "PDD"], wide: true, group: "calc",
-    why: "Exam use: turn a room area into a headcount, then size exits, egress width and exit spacing.",
-    body() {
-      return `<div class="tl-split"><div class="tl-col"><div class="tl-in">
-        <label class="tl-f full"><span class="tl-fl">Function of space (IBC Table 1004.5)</span><select class="tl-sel" data-in="space">${OCC.map((o, i) => `<option value="${i}">${o.l} — ${o.f} sf, ${o.b}</option>`).join("")}</select></label>
-        ${fNum("area", "Area of the space", "sf", 15000, 0, 10000000)}
-        ${fNum("diag", "Longest diagonal of the floor or area", "ft", 150, 0, 5000)}
-        <label class="tl-chk"><input type="checkbox" data-in="sprk"> Sprinklered throughout (NFPA 13 or 13R system, IBC 903.3.1.1 / 903.3.1.2)</label>
-        <label class="tl-chk"><input type="checkbox" data-in="evacs"> Emergency voice/alarm communication system (IBC 907.5.2.2)</label>
-        </div></div><div class="tl-col">
-        <div class="tl-res">${res("Occupant load (rounded up)", "load", "people", 1)}${res("Minimum exits", "exits", "", 1)}${res("Exit separation (min)", "sep", "ft", 1)}</div>
-        <div class="tl-res">${res("Stair width (calculated)", "stairw", "in")}${res("Stair width after 44 in. minimum", "stairgov", "in")}${res("Other egress width (doors, halls, ramps)", "othw", "in")}${res("Stair width each, load split evenly", "stairea", "in")}</div>
-        </div></div>
-        <div data-out="notes"></div>`;
+    id: "occ", title: "Occupant load and egress", div: ["PA", "PPD", "PDD"], group: "calc",
+    why: "Question it answers: how many people a room holds, how many exits it needs, and how wide and far apart they must be.",
+    start: "A fully sprinklered business floor with a voice alarm system is 15,000 square feet (sf), measured gross. Its longest diagonal is 150 feet (ft). How many people does it hold, how many exits does it need, and how far apart must they be?",
+    inputs() {
+      return `<div class="tl-in">
+        ${fSel("space", "Function of space", "International Building Code (IBC) Table 1004.5 sets square feet per person.", OCC.map((o, i) => `<option value="${i}">${o.l} — ${o.f} sf, ${o.b}</option>`).join(""))}
+        ${fNum("area", "Area of the space", "sf", 15000, 0, 10000000, "any", "Floor area in square feet (sf); the problem gives it.")}
+        ${fNum("diag", "Longest diagonal", "ft", 150, 0, 5000, "any", "Longest straight line across the floor, in feet (ft).")}
+        ${fChk("sprk", "Sprinklered throughout", "Automatic sprinklers cover the whole building. Problems state this.")}
+        ${fChk("evacs", "Voice/alarm system", "Emergency voice/alarm communication system. Problems state this.")}
+        </div>`;
+    },
+    results() {
+      return `<div class="tl-res">${res("Occupant load (rounded up)", "load", "people", 1)}${res("Minimum exits", "exits", "", 1)}${res("Exit separation (min)", "sep", "ft", 1)}</div>
+        <div class="tl-res">${res("Stair width (calculated)", "stairw", "in")}${res("Stair width after 44 in. minimum", "stairgov", "in")}${res("Other egress width (doors, halls, ramps)", "othw", "in")}${res("Stair width each, load split evenly", "stairea", "in")}</div>`;
+    },
+    load(card) { put(card, { space: 0, area: 15000, diag: 150, sprk: true, evacs: true }); card._upd(); },
+    ans(card) {
+      const v = card._v;
+      return `${nf(v.load, 0)} people, so ${v.exits} exits placed at least ${nf(v.sep, 1)} ft apart. Stairs must be ${nf(v.gov, 1)} in. wide.`;
+    },
+    gen() {
+      const spaces = [[0, "business area"], [1, "assembly area with tables and chairs"], [2, "assembly area with chairs only"], [5, "classroom area"], [7, "mercantile sales floor"], [9, "residential area"], [12, "exercise room"], [14, "library reading room"]];
+      const sp = pick(spaces), row = OCC[sp[0]];
+      const load = pick([40, 60, 80, 120, 200, 300, 400, 600]), area = load * row.f;
+      const diag = pick([90, 120, 150, 180, 240]), sprk = Math.random() < 0.5, ev = Math.random() < 0.5;
+      const ask = pick(["load", "sep"]);
+      const cap = sp[1].charAt(0).toUpperCase() + sp[1].slice(1);
+      const prob = `${cap} of ${nf(area, 0)} square feet (sf), measured ${row.b}, uses ${row.f} sf per person. The longest diagonal is ${diag} feet (ft). The building ${sprk ? "is" : "is not"} sprinklered throughout${ev ? " and has a voice alarm system" : ""}. What is the ${ask === "load" ? "occupant load" : "minimum exit separation"}?`;
+      return {
+        prob, key: ask, label: ask === "load" ? "Occupant load" : "Minimum exit separation", unit: ask === "load" ? "people" : "ft", nat: ask === "load" ? 0.5 : 0.05, dp: ask === "load" ? 0 : 1,
+        set(card) { put(card, { space: sp[0], area, diag, sprk, evacs: ev }); card._upd(); },
+        work(card) { const v = card._v; return ask === "load" ? `${nf(area, 0)} ÷ ${row.f} = ${nf(v.load, 0)} people.` : `${diag} ft × ${sprk ? "⅓ (sprinklered)" : "½"} = ${nf(v.sep, 1)} ft.`; }
+      };
     },
     init(card) {
       card._upd = function () {
@@ -3832,11 +3917,20 @@ document.addEventListener('keydown', e=>{
         const frac = sprk ? 1 / 3 : 1 / 2;
         const sep = vals.diag * frac;
         const each = Math.ceil(load / exits) * fS;
+        const eachGov = Math.max(each, stairMin);
+        card._v = { load, exits, sep, sw, gov, ow, each: eachGov };
         out(card, "load", nf(load, 0)); out(card, "exits", String(exits)); out(card, "sep", nf(sep, 1));
         out(card, "stairw", nf(sw, 1)); out(card, "stairgov", nf(gov, 1)); out(card, "othw", nf(ow, 1));
-        out(card, "stairea", nf(Math.max(each, stairMin), 1));
+        out(card, "stairea", nf(eachGov, 1));
+        mean(card, "load", `${nf(load, 0)} people: the headcount the code makes you plan exits for.`);
+        mean(card, "exits", `${exits} exits: a story with ${nf(load, 0)} occupants needs at least this many.`);
+        mean(card, "sep", `Place the exits at least ${nf(sep, 1)} ft apart, measured in a straight line.`);
+        mean(card, "stairw", `Stairs need ${nf(sw, 1)} in. of width at ${fS} in. per person.`);
+        mean(card, "stairgov", `Build stairs at least ${nf(gov, 1)} in. wide: the larger of the calculated width and the ${stairMin} in. minimum.`);
+        mean(card, "othw", `Doors, halls and ramps need ${nf(ow, 1)} in. of width at ${fO} in. per person.`);
+        mean(card, "stairea", `If ${exits} stairs share the load evenly, each needs ${nf(eachGov, 1)} in.`);
         const n = [];
-        n.push([exits > 2 ? "warn" : "ok", `A story with ${nf(load, 0)} occupants needs at least <b>${exits} exits</b>.`.replace("<b>", "").replace("</b>", "") ]);
+        n.push([exits > 2 ? "warn" : "ok", `A story with ${nf(load, 0)} occupants needs at least ${exits} exits.`]);
         if (load <= 49) n.push(["info", "Very small spaces may use one exit (IBC Table 1006.2.1, for example Group B up to 49 people with a short common path). This tool shows the story rule of 2."]);
         if (row.a && load >= 50) n.push(["info", "An assembly room with 50 or more occupants is Group A (IBC 303.1.1); fewer than 50 is Group B."]);
         if (row.a) n.push(["info", "Assembly with fixed seats is not in this list: count the seats instead (IBC 1004.6)."]);
@@ -3852,18 +3946,36 @@ document.addEventListener('keydown', e=>{
           <p>Net area = occupied floor only (no corridors, toilets, closets). Gross area = everything inside the exterior walls. A story's load is the sum of its spaces. Width is divided so losing one exit leaves at least 50% of the capacity (IBC 1005.5).</p>`);
       };
     },
-    how: true,
     src: "IBC 2021 Table 1004.5 (load factors, checked against the 2021 table as adopted in WA WAC 51-54A-1004); §1005.3.1 and §1005.3.2 (width factors and the sprinkler + voice/alarm exception); §1006.2.1.1 and §1006.3 (number of exits); §1007.1.1 (exit separation, Exception 2 for sprinklers); §1011.2 (stair width). are_kb: building-codes-egress, occupancy-classification."
   };
 
   /* ============================== TOOL 2: Zoning envelope ============================== */
   const T_ZONE = {
-    id: "zone", title: "Zoning envelope: FAR and coverage", div: ["PA"], group: "calc",
-    why: "Exam use: check a scheme against FAR (floor area ratio) and lot coverage, and see how many stories fit.",
-    body() {
-      return `<div class="tl-in">${fNum("site", "Site area", "sf", 20000, 0, 1e9)}${fNum("foot", "Building footprint", "sf", 6000, 0, 1e9)}${fNum("total", "Total floor area, all stories", "sf", 18000, 0, 1e9)}${fNum("farlim", "FAR limit", "ratio", 1, 0, 100, "0.01")}${fNum("covlim", "Coverage limit", "%", 40, 0, 100)}</div>
-        <div class="tl-res">${res("FAR (actual)", "far", "", 1)}${res("Building coverage ratio", "bcr", "%", 1)}${res("Max floor area allowed", "maxfa", "sf")}${res("Max footprint allowed", "maxfp", "sf")}${res("Stories at full coverage", "stories", "")}${res("Floor area left under FAR", "left", "sf")}</div>
-        <div data-out="notes"></div>`;
+    id: "zone", title: "Zoning envelope: floor area ratio and coverage", div: ["PA"], group: "calc",
+    why: "Question it answers: does a scheme fit the zoning limits on total floor area and on how much of the lot it covers?",
+    start: "A 20,000 square feet (sf) site allows a floor area ratio (FAR) of 1.0 and 40% lot coverage. A scheme has a 9,000 sf footprint and 24,000 sf of floor area in total. Does it comply?",
+    inputs() {
+      return `<div class="tl-in">${fNum("site", "Site area", "sf", 20000, 0, 1e9, "any", "Lot size in square feet (sf), from the problem.")}${fNum("foot", "Building footprint", "sf", 6000, 0, 1e9, "any", "Ground-floor area the building covers, in sf.")}${fNum("total", "Total floor area, all stories", "sf", 18000, 0, 1e9, "any", "Add up every floor, in sf.")}${fNum("farlim", "FAR limit", "ratio", 1, 0, 100, "0.01", "Floor area ratio (FAR): floor area allowed per 1 sf of site.")}${fNum("covlim", "Coverage limit", "%", 40, 0, 100, "any", "Most of the lot the footprint may cover, in percent.")}</div>`;
+    },
+    results() {
+      return `<div class="tl-res">${res("FAR (actual)", "far", "", 1)}${res("Building coverage ratio", "bcr", "%", 1)}${res("Max floor area allowed", "maxfa", "sf")}${res("Max footprint allowed", "maxfp", "sf")}${res("Stories at full coverage", "stories", "")}${res("Floor area left under FAR", "left", "sf")}</div>`;
+    },
+    load(card) { put(card, { site: 20000, foot: 9000, total: 24000, farlim: 1, covlim: 40 }); card._upd(); },
+    ans(card) {
+      const v = card._v;
+      return `FAR ${nf(v.far, 2)} against a limit of ${nf(v.farlim, 2)} (${v.far <= v.farlim + EPS ? "within" : "over"}). Coverage ${nf(v.bcr, 1)}% against ${nf(v.covlim, 1)}% (${v.bcr <= v.covlim + EPS ? "within" : "over"}). The limits allow ${nf(v.maxfa, 0)} sf of floor area and a ${nf(v.maxfp, 0)} sf footprint.`;
+    },
+    gen() {
+      const site = pick([10000, 12000, 15000, 20000, 25000, 30000, 40000]), pct = pick([20, 25, 30, 35, 40, 45, 50]), st = pick([2, 3, 4, 5, 6]);
+      const foot = site * pct / 100, total = foot * st, farlim = pick([0.5, 0.75, 1, 1.5, 2, 2.5, 3]), covlim = pick([30, 40, 50, 60]);
+      const ask = pick(["maxfa", "far", "bcr"]);
+      const qs = { maxfa: ["Maximum floor area allowed", "sf", "What is the maximum floor area the zoning allows?", 0.5, 0], far: ["Actual floor area ratio (FAR)", "ratio", "What is the scheme's actual FAR?", 0.005, 2], bcr: ["Building coverage ratio", "%", "What percent of the site does the footprint cover?", 0.05, 1] }[ask];
+      const prob = `A ${nf(site, 0)} square feet (sf) site has a floor area ratio (FAR) limit of ${farlim} and a coverage limit of ${covlim}%. The scheme has a ${nf(foot, 0)} sf footprint and ${nf(total, 0)} sf of floor area in total. ${qs[2]}`;
+      return {
+        prob, key: ask, label: qs[0], unit: qs[1], nat: qs[3], dp: qs[4],
+        set(card) { put(card, { site, foot, total, farlim, covlim }); card._upd(); },
+        work(card) { const v = card._v; return ask === "maxfa" ? `${farlim} × ${nf(site, 0)} = ${nf(v.maxfa, 0)} sf.` : ask === "far" ? `${nf(total, 0)} ÷ ${nf(site, 0)} = ${fx(v.far, 2)}.` : `${nf(foot, 0)} ÷ ${nf(site, 0)} × 100 = ${nf(v.bcr, 1)}%.`; }
+      };
     },
     init(card) {
       card._upd = function () {
@@ -3872,9 +3984,16 @@ document.addEventListener('keydown', e=>{
         if (bad.length) return showBad(card, bad);
         const far = v.total / v.site, bcr = v.foot / v.site * 100;
         const maxfa = v.farlim * v.site, maxfp = v.covlim / 100 * v.site;
-        const st = maxfa / maxfp;
+        const st = maxfa / maxfp, left = maxfa - v.total;
+        card._v = { far, bcr, maxfa, maxfp, stories: st, left, farlim: v.farlim, covlim: v.covlim };
         out(card, "far", fx(far, 2).replace(/\.?0+$/, "") || "0"); out(card, "bcr", nf(bcr, 1));
-        out(card, "maxfa", nf(maxfa, 0)); out(card, "maxfp", nf(maxfp, 0)); out(card, "stories", nf(st, 2)); out(card, "left", nf(maxfa - v.total, 0));
+        out(card, "maxfa", nf(maxfa, 0)); out(card, "maxfp", nf(maxfp, 0)); out(card, "stories", nf(st, 2)); out(card, "left", nf(left, 0));
+        mean(card, "far", `FAR ${fx(far, 2)}: the building has ${fx(far, 2)} sf of floor for each 1 sf of site.`);
+        mean(card, "bcr", `The footprint covers ${nf(bcr, 1)}% of the site.`);
+        mean(card, "maxfa", `The limit allows ${nf(maxfa, 0)} sf of floor area in total.`);
+        mean(card, "maxfp", `The footprint may cover at most ${nf(maxfp, 0)} sf of the site.`);
+        mean(card, "stories", `At full coverage the FAR limit allows about ${nf(st, 2)} stories.`);
+        mean(card, "left", left >= 0 ? `${nf(left, 0)} sf of floor area is still available under the limit.` : `The scheme is ${nf(-left, 0)} sf over the floor area limit.`);
         const n = [];
         n.push([far <= v.farlim + EPS ? "ok" : "bad", far <= v.farlim + EPS ? `FAR ${fx(far, 2)} is within the limit of ${nf(v.farlim, 2)}.` : `FAR ${fx(far, 2)} is over the limit of ${nf(v.farlim, 2)}. Cut ${nf(v.total - maxfa, 0)} sf of floor area.`]);
         n.push([bcr <= v.covlim + EPS ? "ok" : "bad", bcr <= v.covlim + EPS ? `Coverage ${nf(bcr, 1)}% is within the limit of ${nf(v.covlim, 1)}%.` : `Coverage ${nf(bcr, 1)}% is over the limit of ${nf(v.covlim, 1)}%. Cut ${nf(v.foot - maxfp, 0)} sf of footprint.`]);
@@ -3883,7 +4002,7 @@ document.addEventListener('keydown', e=>{
         n.push(["info", st < 1 ? "The FAR limit is reached before the footprint limit fills one floor. FAR is the limit that binds." : `At full coverage the FAR limit allows about ${nf(st, 2)} stories, so ${st < 2 ? "FAR" : "FAR and the height limit"} controls the height.`]);
         n.push(["info", "This tool does not test setbacks or the height limit. The most restrictive control governs."]);
         notes(card, n);
-        html(card, "how", `<p><code>FAR = total floor area ÷ site area</code> and <code>BCR = footprint ÷ site area × 100</code>. The limits give a ceiling: <code>max floor area = FAR limit × site</code>, <code>max footprint = coverage limit × site</code>.</p>
+        html(card, "how", `<p><code>FAR = total floor area ÷ site area</code> and <code>BCR = footprint ÷ site area × 100</code> (BCR is the building coverage ratio). The limits give a ceiling: <code>max floor area = FAR limit × site</code>, <code>max footprint = coverage limit × site</code>.</p>
           <p>Now: <code>${nf(v.total, 0)} ÷ ${nf(v.site, 0)} = ${fx(far, 3)}</code>; <code>${nf(v.foot, 0)} ÷ ${nf(v.site, 0)} = ${nf(bcr, 1)}%</code>; <code>${nf(maxfa, 0)} ÷ ${nf(maxfp, 0)} = ${nf(st, 2)} stories</code>.</p>
           <p>Many codes leave out parking, basements or mechanical space from floor area. On the exam, count all gross floor area unless the question says otherwise.</p>`);
       };
@@ -3894,11 +4013,29 @@ document.addEventListener('keydown', e=>{
   /* ============================== TOOL 3: Cut and fill ============================== */
   const T_EARTH = {
     id: "earth", title: "Cut and fill: bank, loose, compacted", div: ["PA"], group: "calc",
-    why: "Exam use: convert soil between bank, loose (hauled) and compacted volumes, and count truckloads.",
-    body() {
-      return `<div class="tl-in">${fNum("bank", "Bank volume (cut in place)", "cy", 230, 0, 1e9)}${fNum("swell", "Swell, bank to loose", "%", 30, 0, 100)}${fNum("shrink", "Shrink, bank to compacted", "%", 10, -50, 50)}${fNum("truck", "Truck capacity (loose)", "cy", 12, 0, 1000)}${fNum("need", "Compacted fill needed (optional)", "cy", "", 0, 1e9)}</div>
-        <div class="tl-res">${res("Loose (hauled) volume", "loose", "cy", 1)}${res("Compacted volume", "comp", "cy", 1)}${res("Truckloads", "trucks", "loads", 1)}${res("Bank cut needed for that fill", "needbank", "cy")}</div>
-        <div data-out="notes"></div>`;
+    why: "Question it answers: how much soil you haul, how much fill it makes, and how many truckloads that takes.",
+    start: "A cut removes 230 cubic yards (cy) of soil, measured in place (bank). The soil swells 30% when dug and shrinks 10% when compacted. A truck carries 12 cy loose. How many truckloads, and how much compacted fill do you get?",
+    inputs() {
+      return `<div class="tl-in">${fNum("bank", "Bank volume (cut in place)", "cy", 230, 0, 1e9, "any", "Soil volume measured in the ground, in cubic yards (cy).")}${fNum("swell", "Swell, bank to loose", "%", 30, 0, 100, "any", "Percent the soil grows when dug. The problem gives it.")}${fNum("shrink", "Shrink, bank to compacted", "%", 10, -50, 50, "any", "Percent the soil shrinks when compacted. Negative means it grows.")}${fNum("truck", "Truck capacity (loose)", "cy", 12, 0, 1000, "any", "Loose cubic yards one truck carries per trip.")}${fNum("need", "Compacted fill needed (optional)", "cy", "", 0, 1e9, "any", "Fill volume the site requires. Leave blank if unknown.")}</div>`;
+    },
+    results() {
+      return `<div class="tl-res">${res("Loose (hauled) volume", "loose", "cy", 1)}${res("Compacted volume", "comp", "cy", 1)}${res("Truckloads", "trucks", "loads", 1)}${res("Bank cut needed for that fill", "needbank", "cy")}</div>`;
+    },
+    load(card) { put(card, { bank: 230, swell: 30, shrink: 10, truck: 12, need: "" }); card._upd(); },
+    ans(card) {
+      const v = card._v;
+      return `${nf(v.loose, 1)} cy of loose soil to haul (${nf(v.trucks, 0)} truckloads), and ${nf(v.comp, 1)} cy of compacted fill.`;
+    },
+    gen() {
+      const bank = pick([100, 150, 200, 250, 300, 400, 500, 600, 800, 1000]), swell = pick([15, 20, 25, 30, 40]), shrink = pick([5, 10, 15]), truck = pick([10, 12, 14, 16]);
+      const ask = pick(["loose", "comp", "trucks"]);
+      const qs = { loose: ["Loose (hauled) volume", "cy", "How many cubic yards of loose soil must you haul?", 0.5, 1], comp: ["Compacted volume", "cy", "How many cubic yards of compacted fill does the cut make?", 0.5, 1], trucks: ["Truckloads", "loads", "How many truckloads are needed?", 0.5, 0] }[ask];
+      const prob = `A cut removes ${nf(bank, 0)} cubic yards (cy) of bank soil. The soil swells ${swell}% when dug and shrinks ${shrink}% when compacted. A truck carries ${truck} cy loose. ${qs[2]}`;
+      return {
+        prob, key: ask, label: qs[0], unit: qs[1], nat: qs[3], dp: qs[4],
+        set(card) { put(card, { bank, swell, shrink, truck, need: "" }); card._upd(); },
+        work(card) { const v = card._v; return ask === "loose" ? `${bank} × ${fx(1 + swell / 100, 2)} = ${nf(v.loose, 1)} cy.` : ask === "comp" ? `${bank} × ${fx(1 - shrink / 100, 2)} = ${nf(v.comp, 1)} cy.` : `${nf(v.loose, 1)} ÷ ${truck} = ${fx(v.loose / truck, 2)}, rounded up to ${nf(v.trucks, 0)}.`; }
+      };
     },
     init(card) {
       card._upd = function () {
@@ -3906,20 +4043,26 @@ document.addEventListener('keydown', e=>{
         if (bad.length) return showBad(card, bad);
         const loose = v.bank * (1 + v.swell / 100), comp = v.bank * (1 - v.shrink / 100);
         const trucks = Math.ceil(loose / v.truck - EPS);
+        card._v = { loose, comp, trucks };
         out(card, "loose", nf(loose, 1)); out(card, "comp", nf(comp, 1)); out(card, "trucks", nf(trucks, 0));
+        mean(card, "loose", `Dug soil swells to ${nf(loose, 1)} cy. This is the volume you must haul.`);
+        mean(card, "comp", `${nf(v.bank, 1)} cy of bank soil makes ${nf(comp, 1)} cy of compacted fill.`);
+        mean(card, "trucks", `${nf(trucks, 0)} truckloads: loose volume ÷ truck size, rounded up.`);
         const n = [];
         if (v.need != null && v.need > 0) {
           const nb = v.need / (1 - v.shrink / 100);
+          card._v.nb = nb;
           out(card, "needbank", nf(nb, 1));
+          mean(card, "needbank", `To get ${nf(v.need, 1)} cy of compacted fill, dig ${nf(nb, 1)} cy of bank soil.`);
           const diff = v.bank - nb;
-          n.push([Math.abs(diff) < 0.5 ? "ok" : "warn", Math.abs(diff) < 0.5 ? "Cut and fill are balanced." : diff > 0 ? `You have <b>${nf(diff, 1)} cy (bank)</b> of extra cut to haul away (waste).`.replace(/<\/?b>/g, "") : `You are <b>${nf(-diff, 1)} cy (bank)</b> short and must import borrow.`.replace(/<\/?b>/g, "")]);
-        } else out(card, "needbank", "—");
+          n.push([Math.abs(diff) < 0.5 ? "ok" : "warn", Math.abs(diff) < 0.5 ? "Cut and fill are balanced." : diff > 0 ? `You have ${nf(diff, 1)} cy (bank) of extra cut to haul away (waste).` : `You are ${nf(-diff, 1)} cy (bank) short and must import borrow.`]);
+        } else { out(card, "needbank", "—"); mean(card, "needbank", "Enter the compacted fill you need to see the bank soil to dig."); }
         n.push(["info", "Swell and shrink are percentages of the BANK volume, not of the loose volume."]);
         if (v.shrink < 0) n.push(["info", "Negative shrink means the compacted soil ends up larger than the bank volume (some rock does this)."]);
         notes(card, n);
         html(card, "how", `<p><code>loose = bank × (1 + swell)</code> and <code>compacted = bank × (1 − shrink)</code>. Truckloads = loose ÷ truck size, rounded up.</p>
           <p>Now: <code>${nf(v.bank, 1)} × ${fx(1 + v.swell / 100, 2)} = ${nf(loose, 1)} cy</code>; <code>${nf(v.bank, 1)} × ${fx(1 - v.shrink / 100, 2)} = ${nf(comp, 1)} cy</code>; <code>${nf(loose, 1)} ÷ ${nf(v.truck, 1)} → ${nf(trucks, 0)} loads</code>.</p>
-          <p>To find the cut for a given fill: <code>bank needed = compacted fill ÷ (1 − shrink)</code>. 1 cy = 27 cf.</p>`);
+          <p>To find the cut for a given fill: <code>bank needed = compacted fill ÷ (1 − shrink)</code>. 1 cy = 27 cubic feet.</p>`);
       };
     },
     src: "are_kb: site-grading-and-stormwater (Amber Book PA cards 35–37: bank, loose, compacted; 230 bank cy at 10% shrink = 207 compacted cy); Ching §1.12–1.14."
@@ -3928,12 +4071,29 @@ document.addEventListener('keydown', e=>{
   /* ============================== TOOL 4: Slope converter ============================== */
   const T_SLOPE = {
     id: "slope", title: "Slope converter and limits", div: ["PA", "PDD"], group: "calc",
-    why: "Exam use: switch between ratio, percent and degrees, and see which ADA and drainage limits the slope meets.",
-    body() {
-      return `<div class="tl-in">${fNum("ratio", "Ratio: run for 1 of rise (12 means 12:1)", ":1", 12, 0, 1e6)}${fNum("pct", "Percent", "%", "8.33", 0, 1000)}${fNum("deg", "Degrees", "°", "4.76", 0, 90)}</div>
-        <div class="tl-res">${res("Ratio, run : rise", "rr", "", 1)}${res("Ratio, rise : run", "rrr", "")}${res("Percent", "pctout", "%")}${res("Angle", "degout", "°")}</div>
-        <table class="tl-flags"><tbody data-out="flags"></tbody></table>
-        <div data-out="notes"></div>`;
+    why: "Question it answers: what a slope is as a ratio, percent and angle, and which accessibility and drainage limits it meets.",
+    start: "A walk rises 3 feet over 60 feet of run. What is the slope as a ratio, a percent and an angle? Is it within the 1:20 limit for an accessible route (Americans with Disabilities Act, ADA)?",
+    inputs() {
+      return `<div class="tl-in">${fNum("ratio", "Ratio: run for 1 of rise", ":1", 12, 0, 1e6, "any", "Feet of run per 1 foot of rise; 12 means 12:1.")}${fNum("pct", "Percent", "%", "8.33", 0, 1000, "any", "Rise per 100 feet of run. 1:12 is 8.33%.")}${fNum("deg", "Degrees", "°", "4.76", 0, 90, "any", "Angle above level. Edit any one box; the rest update.")}</div>`;
+    },
+    results() {
+      return `<div class="tl-res">${res("Ratio, run : rise", "rr", "", 1)}${res("Ratio, rise : run", "rrr", "")}${res("Percent", "pctout", "%")}${res("Angle", "degout", "°")}</div>`;
+    },
+    extra3() { return `<table class="tl-flags"><tbody data-out="flags"></tbody></table>`; },
+    load(card) { put(card, { ratio: 20 }); card._upd({ target: $in(card, "ratio") }); },
+    ans(card) {
+      const v = card._v;
+      return `${nf(v.run, 2)} : 1 is ${nf(v.pct, 2)}% or ${nf(v.deg, 2)}°. ${v.pct <= 5 + 1e-7 ? "It is within the 1:20 limit, so it is a walk, not a ramp." : "It is steeper than 1:20, so ramp rules apply."}`;
+    },
+    gen() {
+      const t = pick(["rp", "pr", "pd"]);
+      if (t === "rp") {
+        const r = pick([8, 10, 12, 15, 16, 20, 24, 30, 40, 48]);
+        return { prob: `A slope runs ${r} feet for every 1 foot of rise (${r}:1). What is the slope in percent?`, key: "pct", label: "Slope in percent", unit: "%", nat: 0.05, dp: 2, set(card) { put(card, { ratio: r }); card._upd({ target: $in(card, "ratio") }); }, work(card) { return `100 ÷ ${r} = ${nf(card._v.pct, 2)}%.`; } };
+      }
+      const p = pick([2, 4, 5, 8, 10, 20, 25, 50]);
+      if (t === "pr") return { prob: `A drive slopes ${p}%. How many feet of run are there for every 1 foot of rise?`, key: "run", label: "Run for 1 foot of rise", unit: "ft", nat: 0.05, dp: 2, set(card) { put(card, { pct: p }); card._upd({ target: $in(card, "pct") }); }, work(card) { return `100 ÷ ${p} = ${nf(card._v.run, 2)} ft of run per 1 ft of rise.`; } };
+      return { prob: `A grade slopes ${p}%. What is the angle above level, in degrees?`, key: "deg", label: "Angle above level", unit: "°", nat: 0.05, dp: 2, set(card) { put(card, { pct: p }); card._upd({ target: $in(card, "pct") }); }, work(card) { return `arctan(${p} ÷ 100) = ${nf(card._v.deg, 2)}°.`; } };
     },
     init(card) {
       card._upd = function (e) {
@@ -3945,16 +4105,22 @@ document.addEventListener('keydown', e=>{
         const el = $in(card, src), raw = el.value.trim(), x = raw === "" ? NaN : Number(raw);
         if (!(Number.isFinite(x) && x > lim[0] && x < (src === "deg" ? 90 : lim[1] + 1) && x <= lim[1])) {
           el.setAttribute("aria-invalid", "true");
+          html(card, "flags", "");
           return showBad(card, [lim[2] + ": enter a number above 0" + (src === "deg" ? " and below 90" : " and up to " + nf(lim[1])) + "."]);
         }
         ids.forEach(i => $in(card, i).removeAttribute("aria-invalid"));
         const pct = src === "pct" ? x : src === "ratio" ? 100 / x : 100 * Math.tan(x * D2R);
         const run = 100 / pct, deg = Math.atan(pct / 100) * R2D;
+        card._v = { run, pct, deg };
         const trim = (n, d) => String(Number(n.toFixed(d)));
         if (src !== "ratio") $in(card, "ratio").value = trim(run, 2);
         if (src !== "pct") $in(card, "pct").value = trim(pct, 2);
         if (src !== "deg") $in(card, "deg").value = trim(deg, 2);
         out(card, "rr", nf(run, 2) + " : 1"); out(card, "rrr", "1 : " + nf(run, 2)); out(card, "pctout", nf(pct, 2)); out(card, "degout", nf(deg, 2));
+        mean(card, "rr", `The slope runs ${nf(run, 2)} ft level for every 1 ft of rise.`);
+        mean(card, "rrr", "The same slope with the rise written first. Ramps are written this way, like 1:12.");
+        mean(card, "pctout", `${nf(pct, 2)}%: the ground rises ${nf(pct, 2)} ft for every 100 ft of run.`);
+        mean(card, "degout", `${nf(deg, 2)}°: the angle above a level line.`);
         const rows = [
           ["ADA cross slope: 1:48 (2.08%) maximum", pct <= 100 / 48 + 1e-7],
           ["ADA accessible route, running slope: 1:20 (5%) maximum", pct <= 5 + 1e-7],
@@ -3984,12 +4150,30 @@ document.addEventListener('keydown', e=>{
   /* ============================== TOOL 5: Stair checker ============================== */
   const T_STAIR = {
     id: "stair", title: "Stair checker", div: ["PDD"], group: "calc",
-    why: "Exam use: split a floor-to-floor rise into equal risers, then check riser, tread and comfort rules.",
-    body() {
-      return `<div class="tl-in">${fNum("rise", "Total rise (floor to floor)", "in", 120, 0, 400)}${fNum("maxr", "Target maximum riser", "in", 7, 0, 12)}${fNum("cnt", "Riser count (blank = automatic)", "", "", 1, 100, "1")}${fNum("tread", "Tread depth", "in", 11, 0, 30)}
-        <label class="tl-f full"><span class="tl-fl">Code</span><select class="tl-sel" data-in="code"><option value="ibc">IBC 2021 commercial: riser 4–7 in., tread 11 in. min</option><option value="irc">IRC 2021 residential: riser 7¾ in. max, tread 10 in. min</option></select></label></div>
-        <div class="tl-res">${res("Risers", "n", "", 1)}${res("Riser height", "r", "in", 1)}${res("Treads", "nt", "")}${res("Total run", "run", "in")}${res("Total run", "runft", "")}${res("2R + T", "c1", "in")}${res("R × T", "c2", "")}${res("Slope angle", "ang", "°")}</div>
-        <div data-out="notes"></div>`;
+    why: "Question it answers: how many equal risers fit a floor-to-floor height, and does the stair meet riser, tread and comfort rules?",
+    start: "Floor to floor is 9 feet (108 inches). Risers may be 7 inches at most and treads are 11 inches deep. How many risers do you need, how high is each, and how long is the stair run?",
+    inputs() {
+      return `<div class="tl-in">${fNum("rise", "Total rise (floor to floor)", "in", 120, 0, 400, "any", "Vertical height from one finished floor to the next, in inches.")}${fNum("maxr", "Target maximum riser", "in", 7, 0, 12, "any", "Tallest step allowed, in inches. The code sets the cap.")}${fNum("cnt", "Riser count (blank = automatic)", "", "", 1, 100, "1", "Set your own number of risers, or leave blank.")}${fNum("tread", "Tread depth", "in", 11, 0, 30, "any", "Horizontal depth of one step, in inches.")}
+        ${fSel("code", "Code", "Pick the code your project falls under.", '<option value="ibc">International Building Code (IBC) 2021, commercial: riser 4–7 in., tread 11 in. min</option><option value="irc">International Residential Code (IRC) 2021, houses: riser 7¾ in. max, tread 10 in. min</option>')}</div>`;
+    },
+    results() {
+      return `<div class="tl-res">${res("Risers", "n", "", 1)}${res("Riser height", "r", "in", 1)}${res("Treads", "nt", "")}${res("Total run", "run", "in")}${res("Total run", "runft", "")}${res("2R + T", "c1", "in")}${res("R × T", "c2", "")}${res("Slope angle", "ang", "°")}</div>`;
+    },
+    load(card) { put(card, { rise: 108, maxr: 7, cnt: "", tread: 11, code: "ibc" }); card._upd(); },
+    ans(card) {
+      const v = card._v;
+      return `${v.n} risers of ${fx(v.r, 2)} in. each, ${v.nt} treads, and a total run of ${nf(v.run, 1)} in. (${ftIn(v.run)}).`;
+    },
+    gen() {
+      const rise = pick([96, 102, 108, 114, 120, 126, 132, 138, 144]), tread = pick([11, 12]);
+      const ask = pick(["n", "r", "run"]);
+      const qs = { n: ["Number of risers", "risers", "How many risers do you need?", 0.5, 0], r: ["Riser height", "in.", "How tall is each riser?", 0.005, 2], run: ["Total run", "in.", "What is the total run of the stair?", 0.5, 1] }[ask];
+      const prob = `Floor to floor is ${rise} inches. Risers may be 7 inches at most and treads are ${tread} inches deep. ${qs[2]}`;
+      return {
+        prob, key: ask, label: qs[0], unit: qs[1], nat: qs[3], dp: qs[4],
+        set(card) { put(card, { rise, maxr: 7, cnt: "", tread, code: "ibc" }); card._upd(); },
+        work(card) { const v = card._v; return ask === "n" ? `${rise} ÷ 7 = ${fx(rise / 7, 2)}, rounded up to ${v.n}.` : ask === "r" ? `${rise} ÷ ${v.n} = ${fx(v.r, 2)} in.` : `${v.n} risers − 1 = ${v.nt} treads; ${v.nt} × ${tread} = ${nf(v.run, 1)} in.`; }
+      };
     },
     init(card) {
       card._upd = function () {
@@ -4000,8 +4184,17 @@ document.addEventListener('keydown', e=>{
         const n = v.cnt != null ? v.cnt : Math.ceil(v.rise / v.maxr - EPS);
         const r = v.rise / n, nt = n - 1, run = nt * v.tread;
         const c1 = 2 * r + v.tread, c2 = r * v.tread, ang = Math.atan2(r, v.tread) * R2D;
+        card._v = { n, r, nt, run, c1, c2, ang };
         out(card, "n", String(n)); out(card, "r", fx(r, 2)); out(card, "nt", String(nt));
         out(card, "run", nf(run, 1)); out(card, "runft", ftIn(run)); out(card, "c1", fx(c1, 2)); out(card, "c2", fx(c2, 1)); out(card, "ang", fx(ang, 1));
+        mean(card, "n", `${n} risers: the total rise is cut into ${n} equal steps up.`);
+        mean(card, "r", `Each step up is ${fx(r, 2)} in. (total rise ÷ ${n}).`);
+        mean(card, "nt", `${nt} treads: a flight has one tread fewer than risers.`);
+        mean(card, "run", `The stair needs ${nf(run, 1)} in. of floor length (treads × tread depth).`);
+        mean(card, "runft", `The same run in feet and inches: ${ftIn(run)}.`);
+        mean(card, "c1", `2R + T (twice the riser plus the tread) = ${fx(c1, 2)} in. Comfortable stairs fall from 24 to 25 in.`);
+        mean(card, "c2", `R × T (riser times tread) = ${fx(c2, 1)}. Comfortable stairs fall from 72 to 75.`);
+        mean(card, "ang", `The stair climbs at ${fx(ang, 1)}° above level.`);
         const nn = [], T = (ok, t, f) => nn.push([ok ? "ok" : "bad", ok ? t : f]);
         T(r <= rMax + 1e-9, `Riser ${fx(r, 2)} in. is within the ${rMax} in. maximum.`, `Riser ${fx(r, 2)} in. is over the ${rMax} in. maximum. Add a riser.`);
         if (rMin) T(r >= rMin - 1e-9, `Riser meets the ${rMin} in. minimum.`, `Riser is under the ${rMin} in. minimum. Use fewer risers.`);
@@ -4025,14 +4218,35 @@ document.addEventListener('keydown', e=>{
   /* ============================== TOOL 6: Net-to-gross ============================== */
   const T_EFF = {
     id: "eff", title: "Net-to-gross efficiency", div: ["PA"], group: "calc",
-    why: "Exam use: grow a net program area to a gross building area, or find the efficiency of a scheme.",
-    body() {
-      return `<div class="tl-in"><label class="tl-f full"><span class="tl-fl">What do you know?</span><select class="tl-sel" data-in="mode"><option value="ne">Net area and efficiency → gross</option><option value="ge">Gross area and efficiency → net</option><option value="gn">Gross and net → efficiency</option></select></label>
-        <span data-show="net" style="display:contents">${fNum("net", "Net program area", "sf", 6500, 0, 1e9)}</span>
-        <span data-show="gross" style="display:contents">${fNum("gross", "Gross building area", "sf", 10000, 0, 1e9)}</span>
-        <span data-show="eff" style="display:contents">${fNum("eff", "Efficiency (net ÷ gross)", "%", 65, 0, 100)}</span></div>
-        <div class="tl-res">${res("Gross area", "g", "sf", 1)}${res("Net area", "n", "sf", 1)}${res("Efficiency", "e", "%", 1)}${res("Grossing factor", "gf", "")}${res("Non-net area", "nn", "sf")}</div>
-        <div data-out="notes"></div>`;
+    why: "Question it answers: how large the gross building must be for a net program, or how efficient a scheme is.",
+    start: "A program needs 52,000 square feet (sf) of net area. The building will be 65% efficient (net ÷ gross). What gross area must you design?",
+    inputs() {
+      return `<div class="tl-in">${fSel("mode", "What do you know?", "Pick the two values the problem gives you.", '<option value="ne">Net area and efficiency → gross</option><option value="ge">Gross area and efficiency → net</option><option value="gn">Gross and net → efficiency</option>')}
+        <span data-show="net" style="display:contents">${fNum("net", "Net program area", "sf", 6500, 0, 1e9, "any", "Usable space the program lists, in square feet (sf).")}</span>
+        <span data-show="gross" style="display:contents">${fNum("gross", "Gross building area", "sf", 10000, 0, 1e9, "any", "Everything inside the exterior walls, in sf.")}</span>
+        <span data-show="eff" style="display:contents">${fNum("eff", "Efficiency (net ÷ gross)", "%", 65, 0, 100, "any", "Share of the gross area that is net, in percent.")}</span></div>`;
+    },
+    results() {
+      return `<div class="tl-res">${res("Gross area", "g", "sf", 1)}${res("Net area", "n", "sf", 1)}${res("Efficiency", "e", "%", 1)}${res("Grossing factor", "gf", "")}${res("Non-net area", "nn", "sf")}</div>`;
+    },
+    load(card) { put(card, { mode: "ne", net: 52000, eff: 65 }); card._upd(); },
+    ans(card) {
+      const v = card._v;
+      return `Gross area is ${nf(v.g, 1)} sf. The grossing factor is ${fx(v.gf, 3)}, and ${nf(v.nn, 1)} sf goes to non-net space.`;
+    },
+    gen() {
+      const eff = pick([55, 60, 65, 70, 75, 80, 85]), gross = pick([40000, 50000, 60000, 80000, 100000, 120000]), net = gross * eff / 100;
+      const mode = pick(["ne", "ge", "gn"]);
+      const t = {
+        ne: { prob: `A program needs ${nf(net, 0)} square feet (sf) of net area. The building will be ${eff}% efficient (net ÷ gross). What gross area must you design?`, key: "g", label: "Gross area", unit: "sf", nat: 0.5, dp: 0, w: card => `${nf(net, 0)} ÷ ${fx(eff / 100, 2)} = ${nf(card._v.g, 0)} sf.` },
+        ge: { prob: `A building has ${nf(gross, 0)} square feet (sf) gross and is ${eff}% efficient (net ÷ gross). How much net area does it have?`, key: "n", label: "Net area", unit: "sf", nat: 0.5, dp: 0, w: card => `${nf(gross, 0)} × ${fx(eff / 100, 2)} = ${nf(card._v.n, 0)} sf.` },
+        gn: { prob: `A building has ${nf(gross, 0)} square feet (sf) gross and ${nf(net, 0)} sf net. What is its efficiency (net ÷ gross) in percent?`, key: "e", label: "Efficiency", unit: "%", nat: 0.05, dp: 1, w: card => `${nf(net, 0)} ÷ ${nf(gross, 0)} × 100 = ${nf(card._v.e, 1)}%.` }
+      }[mode];
+      return {
+        prob: t.prob, key: t.key, label: t.label, unit: t.unit, nat: t.nat, dp: t.dp,
+        set(card) { put(card, { mode, net, gross, eff }); card._upd(); },
+        work: t.w
+      };
     },
     init(card) {
       card._upd = function () {
@@ -4048,7 +4262,13 @@ document.addEventListener('keydown', e=>{
         if (mode === "ne") { ne = v.net; e = v.eff; g = ne / (e / 100); }
         else if (mode === "ge") { g = v.gross; e = v.eff; ne = g * e / 100; }
         else { g = v.gross; ne = v.net; e = ne / g * 100; }
+        card._v = { g, n: ne, e, gf: g / ne, nn: g - ne };
         out(card, "g", nf(g, 1)); out(card, "n", nf(ne, 1)); out(card, "e", nf(e, 2)); out(card, "gf", fx(g / ne, 3)); out(card, "nn", nf(g - ne, 1));
+        mean(card, "g", `Gross area ${nf(g, 1)} sf: everything inside the exterior walls.`);
+        mean(card, "n", `Net area ${nf(ne, 1)} sf: the usable program space.`);
+        mean(card, "e", `${nf(e, 2)}% of the building is net program space.`);
+        mean(card, "gf", `Grossing factor ${fx(g / ne, 3)}: multiply net area by this to get gross area.`);
+        mean(card, "nn", `${nf(g - ne, 1)} sf goes to halls, walls, stairs, shafts and mechanical space.`);
         const n = [];
         n.push(["info", `The efficiency ratio is always 1.0 or less; the grossing factor is always 1.0 or more. Here: ${fx(e / 100, 3)} and ${fx(g / ne, 3)}.`]);
         n.push([e >= 80 ? "ok" : e >= 60 ? "info" : "warn", e >= 80 ? "High efficiency, like a warehouse (about 0.95) or a lean leasable office (about 80%)." : e >= 60 ? "Typical range. A university classroom building is about 0.65 in the wiki example." : "Low efficiency. Lots of circulation, structure or mechanical space; check that the scheme is not wasteful."]);
@@ -4060,8 +4280,6 @@ document.addEventListener('keydown', e=>{
     },
     src: "are_kb: area-calculations (net-to-gross ratio, grossing factor, “Go RUN”; warehouse 0.95 and classroom building 0.65 examples; Amber Book PA card 26 efficiency 80,000 ÷ 100,000 = 80%)."
   };
-
-  /* ============================== TOOL 7: Sun angle + overhang ============================== */
   const MONTH_N = [21, 52, 80, 111, 141, 172, 202, 233, 264, 294, 325, 355];
   const MONTHS = ["Jan 21", "Feb 21", "Mar 21", "Apr 21", "May 21", "Jun 21", "Jul 21", "Aug 21", "Sep 21", "Oct 21", "Nov 21", "Dec 21"];
   function decl(key) {
@@ -4130,16 +4348,35 @@ document.addEventListener('keydown', e=>{
   }
 
   const T_SUN = {
-    id: "sun", title: "Sun angle and overhang depth", div: ["PA", "PPD"], wide: true, diagram: true, group: "diagram",
-    why: "Exam use: size a south overhang that shades a window in summer and lets the low winter sun in.",
-    body() {
-      return `<div class="tl-split"><div class="tl-col"><div class="tl-in">
-        ${fRange("lat", "Latitude", "°N", 40, 0, 60, 1)}
-        <label class="tl-f full"><span class="tl-fl">Date for the sun rays (solar noon)</span><select class="tl-sel" data-in="date"><option value="sum">Summer solstice (Jun 21)</option><option value="eq">Equinox (Mar 21 / Sep 21)</option><option value="win">Winter solstice (Dec 21)</option>${MONTHS.map((m, i) => `<option value="m${i}">${m}</option>`).join("")}</select></label>
-        ${fRange("H", "Window height H", "ft", 5, 1, 10, 0.5)}${fRange("sill", "Sill height above floor", "ft", 3, 0, 6, 0.5)}</div>
-        <div class="tl-res">${res("Overhang depth D", "D", "ft", 1)}${res("Summer noon altitude", "altS", "°", 1)}${res("Equinox noon altitude", "altE", "°")}${res("Winter noon altitude", "altW", "°")}${res("Altitude, chosen date", "altD", "°")}${res("Shadow down the window", "shadow", "ft")}${res("Window shaded", "pct", "%")}</div></div>
-        <div class="tl-col"><svg class="tl-svg" viewBox="0 0 480 340" role="img" aria-label="Section through a south wall with a window and overhang, showing sun rays"></svg></div></div>
-        <div data-out="notes"></div>`;
+    id: "sun", title: "Sun angle and overhang depth", div: ["PA", "PPD"], diagram: true, group: "diagram",
+    why: "Question it answers: how deep a south overhang must be to shade a window in summer yet let the low winter sun in.",
+    start: "At 40 degrees north latitude, a south window is 5 feet (ft) tall. How deep must the overhang be to shade it fully at noon on June 21? How much of the glass is shaded at noon on December 21?",
+    inputs() {
+      return `<div class="tl-in">
+        ${fRange("lat", "Latitude", "°N", 40, 0, 60, 1, "Degrees north of the equator, from the problem.")}
+        ${fSel("date", "Date for the sun rays (solar noon)", "Sun height changes by date; pick the day to test.", `<option value="sum">Summer solstice (Jun 21)</option><option value="eq">Equinox (Mar 21 / Sep 21)</option><option value="win">Winter solstice (Dec 21)</option>${MONTHS.map((m, i) => `<option value="m${i}">${m}</option>`).join("")}`)}
+        ${fRange("H", "Window height H", "ft", 5, 1, 10, 0.5, "Height of the glass, in feet.")}${fRange("sill", "Sill height above floor", "ft", 3, 0, 6, 0.5, "Bottom of the glass above the floor, in feet.")}</div>`;
+    },
+    results() {
+      return `<div class="tl-res">${res("Overhang depth D", "D", "ft", 1)}${res("Summer noon altitude", "altS", "°", 1)}${res("Equinox noon altitude", "altE", "°")}${res("Winter noon altitude", "altW", "°")}${res("Altitude, chosen date", "altD", "°")}${res("Shadow down the window", "shadow", "ft")}${res("Window shaded", "pct", "%")}</div>`;
+    },
+    figure() {
+      return `<svg class="tl-svg" viewBox="0 0 480 340" role="img" aria-label="Section through a south wall with a window and overhang, showing sun rays"></svg>`;
+    },
+    load(card) { put(card, { lat: 40, H: 5, sill: 3, date: "win" }); card._upd(); },
+    ans(card) {
+      const v = card._v;
+      return `The overhang must be ${fx(v.D, 2)} ft deep. At winter-solstice noon the sun is ${fx(v.altD, 2)}° high, so ${fx(v.shadow, 2)} ft (${fx(v.pct, 0)}%) of the glass is shaded.`;
+    },
+    gen() {
+      const lat = pick([28, 32, 36, 40, 44, 48]), H = pick([4, 5, 6, 7, 8]);
+      const ask = pick(["D", "altW"]);
+      const prob = ask === "D" ? `At ${lat} degrees north latitude, a south window is ${H} feet tall. How deep must a south overhang be to shade the whole window at noon on June 21?` : `At ${lat} degrees north latitude, how high is the sun above the horizon at noon on December 21?`;
+      return {
+        prob, key: ask, label: ask === "D" ? "Overhang depth" : "Winter noon sun altitude", unit: ask === "D" ? "ft" : "°", nat: 0.01, dp: 2,
+        set(card) { put(card, { lat, H, sill: 3, date: "sum" }); card._upd(); },
+        work(card) { const v = card._v; return ask === "D" ? `Summer altitude = 90 − ${lat} + 23.45 = ${fx(v.altS, 2)}°; D = ${H} ÷ tan(${fx(v.altS, 2)}°) = ${fx(v.D, 2)} ft.` : `90 − ${lat} − 23.45 = ${fx(v.altW, 2)}°.`; }
+      };
     },
     init(card) {
       const svg = card.querySelector("svg");
@@ -4152,16 +4389,25 @@ document.addEventListener('keydown', e=>{
         const D = northS ? 0 : H / Math.tan(altS * D2R);
         const shadow = northD ? 0 : D * Math.tan(altD * D2R);
         const pct = northD ? 100 : Math.min(100, shadow / H * 100);
+        card._v = { D: northS ? NaN : D, altS, altE, altW, altD, shadow: northD ? NaN : Math.min(shadow, H), pct };
         out(card, "D", northS ? "—" : fx(D, 2)); out(card, "altS", fx(altS, 2)); out(card, "altE", fx(altE, 2)); out(card, "altW", fx(altW, 2));
         out(card, "altD", fx(altD, 2)); out(card, "shadow", northD ? "—" : fx(Math.min(shadow, H), 2)); out(card, "pct", northD ? "100 (wall in shade)" : fx(pct, 0));
+        mean(card, "D", northS ? "No south overhang can block the summer noon sun at this latitude." : `A ${fx(D, 2)} ft overhang shades the whole ${nf(H, 1)} ft window at summer-solstice noon.`);
+        mean(card, "altS", `At noon on Jun 21 the sun is ${fx(altS, 2)}° above the horizon.`);
+        mean(card, "altE", `At noon on Mar 21 or Sep 21 the sun is ${fx(altE, 2)}° high.`);
+        mean(card, "altW", `At noon on Dec 21 the sun is ${fx(altW, 2)}° high, its lowest of the year.`);
+        mean(card, "altD", `On the chosen date the noon sun is ${fx(altD, 2)}° above the horizon.`);
+        mean(card, "shadow", northD ? "The sun is north of the wall, so the wall is in shade." : `The overhang's shadow reaches ${fx(Math.min(shadow, H), 2)} ft down the glass on that date.`);
+        mean(card, "pct", northD ? "The wall itself is in shade on this date." : `${fx(pct, 0)}% of the window height is in shade on that date.`);
         svg.innerHTML = sunSvg({ lat, H, sill, D, altS, altD, northD, shadow, keyD: key });
         const n = [];
         if (northS) n.push(["warn", "At this latitude the summer noon sun is north of overhead. A south overhang can't block it. Shade east, west and north openings instead."]);
         else {
           n.push(["ok", `Overhang depth D = ${fx(D, 2)} ft shades the whole ${nf(H, 1)} ft window at the summer solstice.`]);
-          if (!northD) n.push([pct >= 99.5 ? "info" : "info", `On the chosen date the shadow reaches ${fx(Math.min(shadow, H), 2)} ft down the window (${fx(pct, 0)}% shaded). ${pct < 99.5 ? "The rest of the glass gets direct sun." : ""}`]);
+          if (!northD) n.push(["info", `On the chosen date the shadow reaches ${fx(Math.min(shadow, H), 2)} ft down the window (${fx(pct, 0)}% shaded). ${pct < 99.5 ? "The rest of the glass gets direct sun." : ""}`]);
         }
         if (altW < 15 && !northS) n.push(["info", "The winter sun is very low here, so even a deep overhang lets it reach the glass."]);
+        n.push(["info", "Diagram: gold slab = overhang. Dark part of the glass = shaded. Gold part = sunlit. Dashed line = the summer ray."]);
         notes(card, n);
         html(card, "how", `<p>Noon altitude = 90° − latitude + declination. Declination is +23.45° at the summer solstice, 0° at the equinox, −23.45° at the winter solstice. (If latitude is below the declination, the sun is north of overhead and the formula uses 90 − |lat − dec|.)</p>
           <p>Right triangle: the overhang edge, the window sill and the ray. To shade the full window at the summer solstice, <code>D = H ÷ tan(summer altitude)</code>.</p>
@@ -4178,15 +4424,37 @@ document.addEventListener('keydown', e=>{
     return `M${fx(cx + r * Math.cos(a0), 1)} ${fx(cy + r * Math.sin(a0), 1)} A${r} ${r} 0 0 ${da > 0 ? 1 : 0} ${fx(cx + r * Math.cos(a1), 1)} ${fx(cy + r * Math.sin(a1), 1)}`;
   }
   const T_PV = {
-    id: "pv", title: "Solar panel tilt", div: ["PPD"], wide: true, diagram: true, group: "diagram",
-    why: "Exam use: pick a fixed panel tilt from latitude and season, and see how far the noon sun is from square-on.",
-    body() {
-      return `<div class="tl-split"><div class="tl-col"><div class="tl-in">
-        ${fRange("lat", "Latitude", "°N", 34, 0, 60, 1)}
-        <div class="tl-seg" role="radiogroup" aria-label="Season"><label class="tl-pill"><input type="radio" name="pvseason" value="year" checked> Year-round</label><label class="tl-pill"><input type="radio" name="pvseason" value="summer"> Summer</label><label class="tl-pill"><input type="radio" name="pvseason" value="winter"> Winter</label></div></div>
-        <div class="tl-res">${res("Recommended tilt", "tilt", "° from horizontal", 1)}${res("Noon sun altitude", "alt", "°", 1)}${res("Angle of incidence", "aoi", "°", 1)}${res("Output vs square-on", "eff", "%")}${res("Angle B (to panel normal)", "bang", "°")}</div></div>
-        <div class="tl-col"><svg class="tl-svg" viewBox="0 0 480 300" role="img" aria-label="Section view of a south-facing solar panel with the noon sun ray"></svg></div></div>
-        <div data-out="notes"></div>`;
+    id: "pv", title: "Solar panel tilt", div: ["PPD"], diagram: true, group: "diagram",
+    why: "Question it answers: what fixed tilt suits a latitude and season, and how far the noon sun is from square-on.",
+    start: "A fixed, south-facing solar panel (photovoltaic, PV) sits at 40 degrees north latitude. You want it to favor summer. What tilt do you use, and how far off square-on is the noon sun on June 21?",
+    inputs() {
+      return `<div class="tl-in">
+        ${fRange("lat", "Latitude", "°N", 34, 0, 60, 1, "Degrees north of the equator, from the problem.")}
+        <div class="tl-f full"><span class="tl-fl">Season to favor</span><span class="tl-fh">Year-round, summer or winter. Pick what the problem asks.</span>
+        <div class="tl-seg" role="radiogroup" aria-label="Season"><label class="tl-pill"><input type="radio" name="pvseason" value="year" checked> Year-round</label><label class="tl-pill"><input type="radio" name="pvseason" value="summer"> Summer</label><label class="tl-pill"><input type="radio" name="pvseason" value="winter"> Winter</label></div></div></div>`;
+    },
+    results() {
+      return `<div class="tl-res">${res("Recommended tilt", "tilt", "° from horizontal", 1)}${res("Noon sun altitude", "alt", "°", 1)}${res("Angle of incidence", "aoi", "°", 1)}${res("Output vs square-on", "eff", "%")}${res("Angle B (to panel normal)", "bang", "°")}</div>`;
+    },
+    figure() {
+      return `<svg class="tl-svg" viewBox="0 0 480 300" role="img" aria-label="Section view of a south-facing solar panel with the noon sun ray"></svg>`;
+    },
+    load(card) { put(card, { lat: 40 }); card.querySelector('input[name="pvseason"][value="summer"]').checked = true; card._upd(); },
+    ans(card) {
+      const v = card._v;
+      return `Tilt the panel ${nf(v.tilt, 1)}° from horizontal. The noon sun is ${fx(v.alt, 2)}° high, so it is ${fx(v.aoi, 2)}° off square-on, and the panel gets ${fx(v.eff, 1)}% of the output of a square-on panel.`;
+    },
+    gen() {
+      const lat = pick([30, 32, 34, 36, 38, 40, 42, 45]), season = pick(["year", "summer", "winter"]);
+      const ask = pick(["tilt", "alt"]);
+      const sname = { year: "year-round", summer: "summer", winter: "winter" }[season];
+      const datename = { year: "the equinox (March 21)", summer: "June 21", winter: "December 21" }[season];
+      const prob = ask === "tilt" ? `A fixed, south-facing solar panel sits at ${lat} degrees north latitude. You want it to favor ${sname === "year-round" ? "year-round output" : sname}. What tilt from horizontal do you use?` : `At ${lat} degrees north latitude, how high is the noon sun above the horizon on ${datename}?`;
+      return {
+        prob, key: ask, label: ask === "tilt" ? "Panel tilt" : "Noon sun altitude", unit: "°", nat: 0.5, dp: ask === "tilt" ? 0 : 2,
+        set(card) { put(card, { lat }); card.querySelector('input[name="pvseason"][value="' + season + '"]').checked = true; card._upd(); },
+        work(card) { const v = card._v; const dec = season === "summer" ? "+ 23.45" : season === "winter" ? "− 23.45" : "+ 0"; return ask === "tilt" ? `${season === "year" ? "latitude" : season === "summer" ? "latitude − 15°" : "latitude + 15°"} = ${nf(v.tilt, 0)}°.` : `90 − ${lat} ${dec} = ${fx(v.alt, 2)}°.`; }
+      };
     },
     init(card) {
       const svg = card.querySelector("svg");
@@ -4201,7 +4469,14 @@ document.addEventListener('keydown', e=>{
         const b = tilt * D2R, a = alt * D2R;
         const cosI = Math.sin(b) * Math.cos(a) * (north ? -1 : 1) + Math.cos(b) * Math.sin(a);
         const aoi = Math.acos(Math.max(-1, Math.min(1, cosI))) * R2D;
+        card._v = { tilt, alt, aoi, eff: cosI > 0 ? cosI * 100 : 0, bang: 90 - tilt };
         out(card, "tilt", fx(tilt, 1).replace(/\.0$/, "")); out(card, "alt", fx(alt, 2)); out(card, "aoi", fx(aoi, 2)); out(card, "eff", cosI > 0 ? fx(cosI * 100, 1) : "0"); out(card, "bang", fx(90 - tilt, 1).replace(/\.0$/, ""));
+        const rule = season === "year" ? "latitude" : season === "summer" ? "latitude − 15°" : "latitude + 15°";
+        mean(card, "tilt", `Tilt the panel ${fx(tilt, 1).replace(/\.0$/, "")}° up from flat, using the rule ${rule}.`);
+        mean(card, "alt", `At noon the sun is ${fx(alt, 2)}° above the horizon.`);
+        mean(card, "aoi", `The noon sun hits ${fx(aoi, 2)}° off square-on to the panel. 0° is best.`);
+        mean(card, "eff", `The panel collects ${cosI > 0 ? fx(cosI * 100, 1) : "0"}% of what a square-on panel would at noon.`);
+        mean(card, "bang", `Angle B = 90° − tilt = ${fx(90 - tilt, 1).replace(/\.0$/, "")}°: the angle between the ground and a line square to the panel.`);
         // drawing
         const gy = 262, x0 = 190, y0 = 256, L = 170;
         const P1 = [x0 + L * Math.cos(b), y0 - L * Math.sin(b)], C = [x0 + L / 2 * Math.cos(b), y0 - L / 2 * Math.sin(b)];
@@ -4221,7 +4496,6 @@ document.addEventListener('keydown', e=>{
         g += `<text x="472" y="22" text-anchor="end">Noon sun α = ${fx(alt, 1)}°</text><text x="472" y="42" text-anchor="end" style="fill:var(--bad)">Incidence = ${fx(aoi, 1)}°</text>
           <text class="m s" x="10" y="286">South</text><text class="m s" x="470" y="286" text-anchor="end">North</text>`;
         svg.innerHTML = g;
-        const rule = season === "year" ? "latitude" : season === "summer" ? "latitude − 15°" : "latitude + 15°";
         const n = [];
         n.push(["info", `${season === "year" ? "Year-round" : season === "summer" ? "Summer" : "Winter"} rule of thumb: tilt = ${rule}. The noon sun altitude is shown for ${season === "year" ? "the equinox (the yearly average)" : season === "summer" ? "the summer solstice" : "the winter solstice"}.`]);
         if (rawTilt < 0 || rawTilt > 90) n.push(["warn", `The rule gives ${fx(rawTilt, 0)}°, which is out of range, so the tilt is held at ${fx(tilt, 0)}°.`]);
@@ -4268,18 +4542,39 @@ document.addEventListener('keydown', e=>{
     return { cut, fill, polys };
   }
   const T_SEC = {
-    id: "sec", title: "Section cut and fill balance", div: ["PA"], wide: true, diagram: true, group: "diagram",
-    why: "Exam use: slide a building pad up and down an existing-grade section and watch cut and fill trade off.",
-    body() {
-      return `<div class="tl-split"><div class="tl-col"><div class="tl-in">
-        <label class="tl-f full"><span class="tl-fl">Existing grade</span><select class="tl-sel" data-in="prof">${Object.keys(PROFILES).map(k => `<option value="${k}">${PROFILES[k].l}</option>`).join("")}</select></label>
-        <label class="tl-f full"><span class="tl-fl">Pad elevation: <b data-v="elev">104</b> ft</span><input type="range" data-in="elev" min="96" max="112" step="0.05" value="104"></label>
-        ${fRange("pstart", "Pad starts at station", "ft", 60, 0, 200, 5)}${fRange("pw", "Pad width", "ft", 120, 20, 240, 5)}
-        ${fNum("len", "Pad length (across the section)", "ft", 100, 0, 100000)}
-        <div class="tl-f full"><button type="button" class="tl-btn" data-act="bal">Set pad to balance cut and fill</button></div></div>
-        <div class="tl-res">${res("Cut area", "cut", "sf", 1)}${res("Fill area", "fill", "sf", 1)}${res("Cut − fill", "net", "sf")}${res("Cut volume", "cutcy", "cy")}${res("Fill volume", "fillcy", "cy")}</div></div>
-        <div class="tl-col"><svg class="tl-svg" viewBox="0 0 480 300" style="touch-action:pan-y" role="img" aria-label="Ground profile with a proposed pad, cut and fill shaded"></svg><p class="tl-why" style="margin:0 0 0;text-align:center" data-out="ve"></p></div></div>
-        <div data-out="notes"></div>`;
+    id: "sec", title: "Section cut and fill balance", div: ["PA"], diagram: true, group: "diagram",
+    why: "Question it answers: at what pad elevation cut equals fill on a ground section, and how much soil moves.",
+    start: "A building pad is 120 feet (ft) wide and starts at station 60 ft on a hill crest. The pad is 100 ft long. At what elevation does it balance cut and fill, and how many cubic yards (cy) are cut?",
+    inputs() {
+      return `<div class="tl-in">
+        ${fSel("prof", "Existing grade", "Pick the ground shape along the section.", Object.keys(PROFILES).map(k => `<option value="${k}">${PROFILES[k].l}</option>`).join(""))}
+        <label class="tl-f full"><span class="tl-fl">Pad elevation: <b data-v="elev">104</b> ft</span><span class="tl-fh">Height of the finished pad, in feet.</span><input type="range" data-in="elev" min="96" max="112" step="0.05" value="104"></label>
+        ${fRange("pstart", "Pad starts at station", "ft", 60, 0, 200, 5, "Distance from the left end of the section, in feet.")}${fRange("pw", "Pad width", "ft", 120, 20, 240, 5, "Width of the pad along the section, in feet.")}
+        ${fNum("len", "Pad length (across the section)", "ft", 100, 0, 100000, "any", "Length at right angles to the section, in feet.")}
+        <div class="tl-f full"><button type="button" class="tl-btn" data-act="bal">Set pad to balance cut and fill</button></div></div>`;
+    },
+    results() {
+      return `<div class="tl-res">${res("Cut area", "cut", "sf", 1)}${res("Fill area", "fill", "sf", 1)}${res("Cut − fill", "net", "sf")}${res("Cut volume", "cutcy", "cy")}${res("Fill volume", "fillcy", "cy")}</div>`;
+    },
+    figure() {
+      return `<svg class="tl-svg" viewBox="0 0 480 300" style="touch-action:pan-y" role="img" aria-label="Ground profile with a proposed pad, cut and fill shaded"></svg><p class="tl-fh" style="text-align:center" data-out="ve"></p>`;
+    },
+    load(card) { card._setProf("crest"); put(card, { pstart: 60, pw: 120, len: 100 }); card._balance(); card._upd(); },
+    ans(card) {
+      const v = card._v;
+      return `A pad at ${fx(v.pad, 2)} ft balances cut and fill: about ${nf(v.cut, 0)} sf of cut and ${nf(v.fill, 0)} sf of fill, so ${nf(v.cutcy, 0)} cy are cut over the ${nf(v.len, 0)} ft pad length.`;
+    },
+    gen() {
+      const k = pick(Object.keys(PROFILES)), pts = PROFILES[k].pts, ys = pts.map(p => p[1]);
+      const lo = Math.floor(Math.min.apply(null, ys)) - 2, hi = Math.ceil(Math.max.apply(null, ys)) + 2;
+      let a, w, pad, r, tries = 0;
+      do { a = pick([0, 40, 80]); w = pick([80, 120]); pad = ri(lo + 2, hi - 2); r = cutFill(pts, pad, a, a + w); } while (r.cut < 50 && tries++ < 200);
+      const prob = `A building pad is ${w} feet (ft) wide and starts at station ${a} ft on a ${PROFILES[k].l.toLowerCase()}. Its elevation is ${pad} ft. Ground elevations at stations 0, 40, 80 … 240 ft are ${pts.map(p => p[1]).join(", ")} ft. How many square feet (sf) of cut are there in the section?`;
+      return {
+        prob, key: "cut", label: "Cut area", unit: "sf", nat: 1, dp: 0,
+        set(card) { card._setProf(k); put(card, { pstart: a, pw: w, len: 100 }); $in(card, "elev").value = pad; card._upd(); },
+        work(card) { const v = card._v; return `Add the strips where ground is above ${pad} ft between stations ${a} and ${a + w}: cut ${nf(v.cut, 0)} sf (fill ${nf(v.fill, 0)} sf).`; }
+      };
     },
     init(card) {
       const svg = card.querySelector("svg"), E = $in(card, "elev");
@@ -4301,6 +4596,8 @@ document.addEventListener('keydown', e=>{
         ps = Math.max(0, Math.min(240, ps)); const pe = Math.min(240, ps + pw);
         return { pts, a: ps, b: pe };
       };
+      card._setProf = function (k) { $in(card, "prof").value = k; setRange(); };
+      card._balance = function () { const g = geom(); E.value = Math.round(balance(g.pts, g.a, g.b) * 20) / 20; };
       card._upd = function (e) {
         if (e && e.target && e.target.dataset && e.target.dataset.in === "prof") { setRange(); const g = geom(); E.value = (Math.round(balance(g.pts, g.a, g.b) * 20) / 20); }
         const { vals, bad } = rd(card, [["len", "Pad length", 0, 100000, { minEx: true }]]);
@@ -4330,9 +4627,21 @@ document.addEventListener('keydown', e=>{
         svg.innerHTML = s;
         const ve = ((dims.b - dims.t) / (range[1] - range[0])) / ((dims.r - dims.l) / 240);
         out(card, "ve", "Vertical scale exaggerated about " + nf(ve, 0) + " times. Drag the gold dot or use the slider.");
-        if (bad.length) { out(card, "cutcy", "—"); out(card, "fillcy", "—"); html(card, "notes", `<div class="tl-note bad"><b>${ICON.bad}</b>${bad[0]}</div>`); out(card, "cut", nf(r.cut, 0)); out(card, "fill", nf(r.fill, 0)); out(card, "net", nf(r.cut - r.fill, 0)); return; }
+        const net0 = r.cut - r.fill;
+        mean(card, "cut", `${nf(r.cut, 0)} square feet (sf) of ground lies above the pad and must be dug out.`);
+        mean(card, "fill", `${nf(r.fill, 0)} sf of ground lies below the pad and must be filled.`);
+        mean(card, "net", Math.abs(net0) < 0.5 ? "Cut and fill are equal: the section is balanced." : net0 > 0 ? `Cut exceeds fill by ${nf(net0, 0)} sf, so soil leaves the site.` : `Fill exceeds cut by ${nf(-net0, 0)} sf, so soil must be imported.`);
+        if (bad.length) {
+          card._v = { cut: r.cut, fill: r.fill, net: net0, pad };
+          out(card, "cutcy", "—"); out(card, "fillcy", "—"); html(card, "notes", `<div class="tl-note bad"><b>${ICON.bad}</b>${bad[0]}</div>`); out(card, "cut", nf(r.cut, 0)); out(card, "fill", nf(r.fill, 0)); out(card, "net", nf(r.cut - r.fill, 0));
+          mean(card, "cutcy", "Enter a pad length to see the cut volume."); mean(card, "fillcy", "Enter a pad length to see the fill volume.");
+          return;
+        }
         const cutcy = r.cut * vals.len / 27, fillcy = r.fill * vals.len / 27, net = r.cut - r.fill;
+        card._v = { cut: r.cut, fill: r.fill, net, cutcy, fillcy, pad, len: vals.len };
         out(card, "cut", nf(r.cut, 0)); out(card, "fill", nf(r.fill, 0)); out(card, "net", nf(net, 0)); out(card, "cutcy", nf(cutcy, 0)); out(card, "fillcy", nf(fillcy, 0));
+        mean(card, "cutcy", `${nf(r.cut, 0)} sf × ${nf(vals.len, 0)} ft ÷ 27 = ${nf(cutcy, 0)} cubic yards (cy) of soil to dig.`);
+        mean(card, "fillcy", `${nf(r.fill, 0)} sf × ${nf(vals.len, 0)} ft ÷ 27 = ${nf(fillcy, 0)} cy of soil to place.`);
         const n = [];
         const tot = r.cut + r.fill, bal = tot > 0 && Math.abs(net) / tot < 0.02;
         if (tot === 0) n.push(["ok", "The pad sits right on the existing grade: no cut and no fill."]);
@@ -4345,9 +4654,7 @@ document.addEventListener('keydown', e=>{
           <p>Now: cut = <code>${nf(r.cut, 0)} sf</code>, fill = <code>${nf(r.fill, 0)} sf</code>. Volume = area × pad length ÷ 27: <code>${nf(r.cut, 0)} × ${nf(vals.len, 0)} ÷ 27 = ${nf(cutcy, 0)} cy</code>.</p>
           <p>The balance point is where cut area = fill area. Raising the pad adds fill and removes cut.</p>`);
       };
-      card.querySelector('[data-act="bal"]').addEventListener("click", function () {
-        const g = geom(); E.value = Math.round(balance(g.pts, g.a, g.b) * 20) / 20; card._upd();
-      });
+      card.querySelector('[data-act="bal"]').addEventListener("click", function () { card._balance(); card._upd(); });
       /* drag the gold handle */
       let drag = false;
       const move = (ev) => {
@@ -4355,48 +4662,152 @@ document.addEventListener('keydown', e=>{
         let el = range[0] + (dims.b - yv) / (dims.b - dims.t) * (range[1] - range[0]);
         el = Math.max(range[0], Math.min(range[1], Math.round(el * 20) / 20)); E.value = el; card._upd();
       };
-      svg.addEventListener("pointerdown", ev => { if (ev.target.closest && ev.target.closest("[data-handle]")) { drag = true; try { svg.setPointerCapture(ev.pointerId); } catch (x) { } ev.preventDefault(); } });
+      svg.addEventListener("pointerdown", ev => { if (E.matches(":disabled")) return; if (ev.target.closest && ev.target.closest("[data-handle]")) { drag = true; try { svg.setPointerCapture(ev.pointerId); } catch (x) { } ev.preventDefault(); } });
       svg.addEventListener("pointermove", ev => { if (drag) move(ev); });
       const up = () => { drag = false; };
       svg.addEventListener("pointerup", up); svg.addEventListener("pointercancel", up);
       svg.addEventListener("touchstart", ev => { if (ev.target.closest && ev.target.closest("[data-handle]")) ev.preventDefault(); }, { passive: false });
       setRange();
-      const g0 = geom(); E.value = 104;
-      card._pre = function () { };
+      E.value = 104;
     },
     src: "Ching §1.12–1.14 (soils, topography, grading); are_kb: site-grading-and-stormwater (cut and fill, bank measure; balanced site grading). Area method is standard average-end-area geometry for a simple polyline section."
   };
 
   const TOOLS = [T_OCC, T_ZONE, T_EARTH, T_SLOPE, T_STAIR, T_EFF, T_SUN, T_PV, T_SEC];
 
+  /* ------------------------------ PRACTICE ------------------------------ */
+  function setOpen(card, on) {
+    card.classList.toggle("open", on);
+    card.querySelector(".tl-body").hidden = !on;
+    const b = card.querySelector('[data-act="open"]');
+    b.setAttribute("aria-expanded", on ? "true" : "false");
+    b.textContent = on ? "Close tool" : "Open tool";
+  }
+  function exitPractice(card) {
+    card._prac = null;
+    card.classList.remove("tl-hideres");
+    card.querySelector("fieldset.tl-fs").disabled = false;
+    card.querySelector(".tl-prac").hidden = true;
+  }
+  function loadExample(card, t) {
+    exitPractice(card);
+    t.load(card);
+    const a = card.querySelector("[data-ans]");
+    a.textContent = "Answer: " + t.ans(card);
+    a.hidden = false;
+    setOpen(card, true);
+  }
+  function startPractice(card, t) {
+    const g = t.gen();
+    card._prac = Object.assign({ done: false, val: (c) => c._v[g.key] }, g);
+    setOpen(card, true);
+    card.querySelector("[data-ans]").hidden = true;
+    card.querySelector("fieldset.tl-fs").disabled = false;
+    g.set(card);
+    card.querySelector("fieldset.tl-fs").disabled = true;
+    card.classList.add("tl-hideres");
+    const box = card.querySelector(".tl-prac");
+    box.hidden = false;
+    box.querySelector('[data-prac="q"]').textContent = g.prob;
+    box.querySelector('[data-prac="ql"]').textContent = (g.unit === "ratio" || g.label.toLowerCase().indexOf(g.unit.toLowerCase()) >= 0) ? g.label : g.label + " (" + g.unit + ")";
+    box.querySelector('[data-prac="unit"]').textContent = g.unit;
+    const inp = box.querySelector('[data-prac="in"]'); inp.value = ""; inp.removeAttribute("aria-invalid");
+    const fb = box.querySelector('[data-prac="fb"]'); fb.hidden = true; fb.textContent = ""; fb.className = "tl-fb";
+    box.querySelector('[data-act="check"]').disabled = false;
+    try { inp.focus({ preventScroll: true }); } catch (x) { }
+  }
+  function checkPractice(card) {
+    const p = card._prac; if (!p || p.done) return;
+    const box = card.querySelector(".tl-prac"), inp = box.querySelector('[data-prac="in"]'), fb = box.querySelector('[data-prac="fb"]');
+    const raw = inp.value.trim().replace(/,/g, ""), a = Number(raw);
+    if (raw === "" || !Number.isFinite(a)) {
+      inp.setAttribute("aria-invalid", "true");
+      fb.hidden = false; fb.className = "tl-fb bad"; fb.textContent = "Type a number first. The unit is " + p.unit + ".";
+      return;
+    }
+    inp.removeAttribute("aria-invalid");
+    const val = p.val(card), ok = Math.abs(a - val) <= tolOf(val, p.nat) + 1e-9;
+    p.done = true;
+    card.classList.remove("tl-hideres");
+    card.querySelector("fieldset.tl-fs").disabled = false;
+    box.querySelector('[data-act="check"]').disabled = true;
+    fb.hidden = false; fb.className = "tl-fb " + (ok ? "ok" : "bad");
+    const u = p.unit === "ratio" ? "" : /^[%°]$/.test(p.unit) ? p.unit : " " + p.unit;
+    fb.innerHTML = `<b>${ok ? "Right." : "Wrong."}</b> ${p.label} = ${nf(val, p.dp)}${u}${/\.$/.test(u) ? "" : "."}${ok ? "" : " You entered " + nf(a, 4) + "."}<br>Worked: ${p.work(card)} The results are now open below.`;
+  }
+
   /* ------------------------------ BUILD ------------------------------ */
+  function cardHtml(t) {
+    return `<article class="tl-card" data-tool="${t.id}" data-div="${t.div.join(" ")}">
+      <div class="tl-top"><h3>${t.title}</h3><div class="tl-badges">${badge(t.div)}</div></div>
+      <p class="tl-why">${t.why}</p>
+      <div class="tl-start"><span class="tl-k">Start here</span><p class="tl-prob">${t.start}</p>
+        <div class="tl-row"><button type="button" class="tl-btn pri" data-act="load">Load this example</button><button type="button" class="tl-btn" data-act="try">Try one</button><button type="button" class="tl-btn" data-act="open" aria-expanded="false" aria-controls="tl-body-${t.id}">Open tool</button></div>
+        <p class="tl-ans" data-ans hidden></p></div>
+      <div class="tl-body" id="tl-body-${t.id}" hidden>
+        <div class="tl-prac" hidden><span class="tl-k">Try one</span><p class="tl-pq" data-prac="q"></p>
+          <div class="tl-arow"><label class="tl-f"><span class="tl-fl" data-prac="ql">Your answer</span><span class="tl-fi"><input type="number" inputmode="decimal" step="any" data-prac="in" aria-label="Your answer"><i data-prac="unit"></i></span></label>
+          <button type="button" class="tl-btn pri" data-act="check">Check</button><button type="button" class="tl-btn" data-act="another">Another</button></div>
+          <p class="tl-fb" data-prac="fb" role="status" hidden></p></div>
+        <div class="tl-split">
+          <section class="tl-s tl-s1"><h4 class="tl-step"><b>1</b> Enter the givens</h4><fieldset class="tl-fs">${t.inputs()}</fieldset>${t.figure ? `<div class="tl-fig">${t.figure()}</div>` : ""}</section>
+          <section class="tl-s tl-s2"><h4 class="tl-step"><b>2</b> Read the result</h4>${t.results()}</section>
+        </div>
+        <section class="tl-s tl-s3"><h4 class="tl-step"><b>3</b> Check the rule</h4><div data-out="notes"></div>${t.extra3 ? t.extra3() : ""}
+          <details class="tl-how"><summary>How it works</summary><div data-out="how"></div></details>
+          <p class="tl-src"><b>Source:</b> ${t.src}</p></section>
+      </div></article>`;
+  }
+
   function build() {
     injectStyles();
     const firstPanel = document.querySelector(".panel");
     const parent = firstPanel ? firstPanel.parentElement : document.body;
     const panel = document.createElement("section");
     panel.id = PID; panel.className = "panel";
-    const chips = ["All", "PA", "PPD", "PDD"].map((d, i) => `<button type="button" class="tl-chip${i === 0 ? " active" : ""}" data-div="${d}">${d}</button>`).join("");
-    const sec = (g, title) => `<h2 class="tl-sec" data-sec="${g}">${title}</h2><div class="tl-grid" data-grid="${g}">` + TOOLS.filter(t => t.group === g).map(t =>
-      `<article class="tl-card${t.wide ? " tl-wide" : ""}" data-tool="${t.id}" data-div="${t.div.join(" ")}">
-        <div class="tl-top"><h3>${t.title}</h3><div class="tl-badges">${badge(t.div)}</div></div>
-        <p class="tl-why">${t.why}</p>${t.body()}
-        <details class="tl-how"><summary>How it works</summary><div data-out="how"></div></details>
-        <p class="tl-src"><b>Source:</b> ${t.src}</p></article>`).join("") + `</div>`;
+    const chips = ["All", "PA", "PPD", "PDD"].map((d, i) => `<button type="button" class="tl-chip${i === 0 ? " active" : ""}" data-div="${d}"${DIVNAME[d] ? ` title="${DIVNAME[d]}"` : ""}>${d}</button>`).join("");
+    const sec = (g, title) => `<h2 class="tl-sec" data-sec="${g}">${title}</h2><div class="tl-grid" data-grid="${g}">` + TOOLS.filter(t => t.group === g).map(cardHtml).join("") + `</div>`;
     panel.innerHTML = `<h2 class="tl-h">Tools</h2>
-      <p class="tl-intro">Exam calculators and live diagrams. Change a number or move a slider and the answer updates. Open “How it works” under each tool to see the formula with your numbers. Always confirm values against the code edition your jurisdiction adopts.</p>
-      <div class="tl-chips"><span class="tl-flabel">Division</span>${chips}</div>
-      ${sec("calc", "Calculators")}${sec("diagram", "Live diagrams")}`;
+      <div class="tl-guide"><p>Each tool answers one exam question. Open one and press Load this example. Then follow three steps: 1 Enter the givens, 2 Read the result, 3 Check the rule. Press Try one to practice. First tools: PA, <button type="button" class="tl-link" data-act="go" data-go="eff">Net-to-gross efficiency</button>. PPD, <button type="button" class="tl-link" data-act="go" data-go="occ">Occupant load and egress</button>. PDD, <button type="button" class="tl-link" data-act="go" data-go="stair">Stair checker</button>.</p></div>
+      <div class="tl-bar"><span class="tl-flabel">Division</span>${chips}<span class="tl-sp"></span><button type="button" class="tl-btn" data-act="expand">Expand all</button><button type="button" class="tl-btn" data-act="collapse">Collapse all</button></div>
+      ${sec("calc", "Calculators")}${sec("diagram", "Live diagrams")}
+      <p class="tl-foot">Always confirm values against the code edition your jurisdiction adopts.</p>`;
     parent.appendChild(panel);
     TOOLS.forEach(t => { const c = panel.querySelector('[data-tool="' + t.id + '"]'); t.init(c); c._upd(); });
-    const upd = (e) => { const c = e.target.closest && e.target.closest(".tl-card"); if (c && c._upd) c._upd(e); };
+    const upd = (e) => {
+      if (e.target.dataset && e.target.dataset.prac) return;
+      const c = e.target.closest && e.target.closest(".tl-card"); if (c && c._upd) c._upd(e);
+    };
     panel.addEventListener("input", upd); panel.addEventListener("change", upd);
+    panel.addEventListener("keydown", function (e) {
+      if (e.key === "Enter" && e.target.dataset && e.target.dataset.prac === "in") { e.preventDefault(); const c = e.target.closest(".tl-card"); checkPractice(c); }
+    });
+    const byId = (id) => TOOLS.filter(t => t.id === id)[0];
     panel.addEventListener("click", function (e) {
-      const ch = e.target.closest(".tl-chip"); if (!ch) return;
-      panel.querySelectorAll(".tl-chip").forEach(b => b.classList.toggle("active", b === ch));
-      const d = ch.dataset.div;
-      panel.querySelectorAll(".tl-card").forEach(c => { c.hidden = !(d === "All" || c.dataset.div.split(" ").indexOf(d) >= 0); });
-      ["calc", "diagram"].forEach(g => { const any = panel.querySelector('[data-grid="' + g + '"] .tl-card:not([hidden])'); panel.querySelector('[data-sec="' + g + '"]').hidden = !any; panel.querySelector('[data-grid="' + g + '"]').hidden = !any; });
+      const b = e.target.closest && e.target.closest("button"); if (!b || !panel.contains(b)) return;
+      if (b.classList.contains("tl-chip")) {
+        panel.querySelectorAll(".tl-chip").forEach(x => x.classList.toggle("active", x === b));
+        const d = b.dataset.div;
+        panel.querySelectorAll(".tl-card").forEach(c => { c.hidden = !(d === "All" || c.dataset.div.split(" ").indexOf(d) >= 0); });
+        ["calc", "diagram"].forEach(g => { const any = panel.querySelector('[data-grid="' + g + '"] .tl-card:not([hidden])'); panel.querySelector('[data-sec="' + g + '"]').hidden = !any; panel.querySelector('[data-grid="' + g + '"]').hidden = !any; });
+        return;
+      }
+      const act = b.dataset.act; if (!act) return;
+      if (act === "expand" || act === "collapse") { panel.querySelectorAll(".tl-card").forEach(c => setOpen(c, act === "expand")); return; }
+      if (act === "go") {
+        const all = panel.querySelector('.tl-chip[data-div="All"]');
+        const c = panel.querySelector('[data-tool="' + b.dataset.go + '"]');
+        if (c.hidden && all) all.click();
+        setOpen(c, true);
+        try { c.scrollIntoView({ block: "start", behavior: "smooth" }); } catch (x) { }
+        return;
+      }
+      const card = b.closest(".tl-card"); if (!card) return;
+      const t = byId(card.dataset.tool);
+      if (act === "load") loadExample(card, t);
+      else if (act === "try" || act === "another") startPractice(card, t);
+      else if (act === "open") setOpen(card, !card.classList.contains("open"));
+      else if (act === "check") checkPractice(card);
     });
   }
 
@@ -4406,7 +4817,7 @@ document.addEventListener('keydown', e=>{
     const btn = document.createElement("button");
     btn.className = "nav-tab"; btn.id = "tl-nav-tab"; btn.setAttribute("role", "tab");
     btn.setAttribute("aria-selected", "false"); btn.setAttribute("aria-controls", PID);
-    btn.textContent = "🧮 Tools";
+    btn.innerHTML = '<svg class="ico" viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><rect x="3" y="1.75" width="10" height="12.5"/><path d="M5.5 4.5h5M5.5 8h1M9.5 8h1M5.5 11h1M9.5 11h1"/></svg>Tools';
     btn.addEventListener("click", function () {
       if (typeof window.switchPanel === "function") window.switchPanel(PID, btn);
       else {
@@ -4422,7 +4833,6 @@ document.addEventListener('keydown', e=>{
   function start() { build(); buildTab(); }
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", start); else start();
 })();
-
 </script>
 <script id="ui-refresh-js">
 (function () {
